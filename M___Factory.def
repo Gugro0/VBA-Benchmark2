@@ -1,5 +1,7 @@
 Option Compare Database
 Option Explicit
-Public Function GetTestClass() As clsTest2
-  Set GetTestClass = New clsTest2
+
+
+Public Function GetTestClass() As clsBench_Strings
+  Set GetTestClass = New clsBench_Strings
 End Function

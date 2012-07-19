@@ -1,0 +1,23 @@
+Attribute VB_GlobalNameSpace = False
+Attribute VB_Creatable = False
+Attribute VB_PredeclaredId = False
+Attribute VB_Exposed = False
+Option Compare Database
+Option Explicit
+
+Public Sub String_WithWhile()
+  Dim str As String
+  
+  While Len(str) < 100
+    str = str + "1"
+  Wend
+End Sub
+
+Private Sub String_WithFor()
+  Dim str As String
+  Dim i   As Integer
+  
+  For i = 1 To 100
+    str = str + "1"
+  Next
+End Sub

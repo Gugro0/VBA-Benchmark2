@@ -28,7 +28,7 @@ End Sub
 Public Sub CreateBenchmark_withClass_has4Tests()
   
   ' Act
-  objBenchmark.Run New clsTest
+  objBenchmark.Run New clsBench_Simple
   
   ' Assert
   Assert.That objBenchmark.TestCount, Iz.EqualTo(4)
@@ -39,20 +39,20 @@ Public Sub CreateBenchmark_withClass_hasTestname()
   ' Arrange
   
   ' Act
-  objBenchmark.Run New clsTest
+  objBenchmark.Run New clsBench_Simple
   
   ' Assert
-  Assert.AreEqualStrings "clsTest->IntegerBenchmark", objBenchmark.Results.Test(1).Name
-  Assert.AreEqualStrings "clsTest->LongBenchmark", objBenchmark.Results.Test(2).Name
-  Assert.AreEqualStrings "clsTest->DoubleBenchmark", objBenchmark.Results.Test(3).Name
-  Assert.AreEqualStrings "clsTest->CurrencyBenchmark", objBenchmark.Results.Test(4).Name
+  Assert.AreEqualStrings "clsBench_Simple->IntegerBenchmark", objBenchmark.Results.Test(1).Name
+  Assert.AreEqualStrings "clsBench_Simple->LongBenchmark", objBenchmark.Results.Test(2).Name
+  Assert.AreEqualStrings "clsBench_Simple->DoubleBenchmark", objBenchmark.Results.Test(3).Name
+  Assert.AreEqualStrings "clsBench_Simple->CurrencyBenchmark", objBenchmark.Results.Test(4).Name
   
 End Sub
 
 Public Sub a_Testrun_needs_some_time()
 
   ' Act
-  objBenchmark.Run New clsTest
+  objBenchmark.Run New clsBench_Simple
   
   ' Assert
   Assert.That objBenchmark.Results.Test(1).Duration, Iz.GreaterThan(1)
@@ -62,7 +62,7 @@ End Sub
 Public Sub a_Testrun_with_more_iteration_needs_more_time()
 
   ' Act
-  objBenchmark.SetIterations(objBenchmark.Iterations * 10).Run New clsTest
+  objBenchmark.SetIterations(objBenchmark.Iterations * 10).Run New clsBench_Simple
   
   ' Assert
   Assert.That objBenchmark.Results.Test(1).Duration, Iz.GreaterThan(10)
@@ -72,18 +72,18 @@ End Sub
 Public Sub we_have_a_TestResult()
   
   ' Act
-  objBenchmark.Run New clsTest
+  objBenchmark.Run New clsBench_Simple
   
   ' Assert
   With objBenchmark.Results.Test(1)
-    Assert.That .Result, Text.Matches("clsTest->IntegerBenchmark .*[0-9]* msec .* ")
+    Assert.That .Result, Text.Matches("clsBench_Simple->IntegerBenchmark .*[0-9]* msec .* ")
   End With
   
 End Sub
 
 Public Sub We_have_a_fastest_Test()
   ' Act
-  objBenchmark.Run New clsTest
+  objBenchmark.Run New clsBench_Simple
   ' Assert
   Assert.IsNotNothing objBenchmark.Results.Fastest
 End Sub
@@ -91,7 +91,7 @@ End Sub
 Public Sub We_Have_a_TestReport()
 
   ' Act
-  objBenchmark.Run New clsTest
+  objBenchmark.Run New clsBench_Simple
   ' Assert
   Assert.That objBenchmark.Report, Iz.[Not].EqualTo("")
   Debug.Print objBenchmark.Report
@@ -101,7 +101,7 @@ End Sub
 
 Public Sub We_can_run_Tests_by_Name()
   ' Act
-  objBenchmark.RunClasses "clsTest clsTest2"
+  objBenchmark.RunClasses "clsBench_Simple clsBench_Strings"
   
   ' Assert
   Assert.That objBenchmark.TestCount, Iz.EqualTo(5)

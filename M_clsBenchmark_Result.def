@@ -37,7 +37,7 @@ End Function
 Public Function Result() As String
   Dim str As String
   
-  str = FillBlank(Me.Name, 30) & " " & Me.Duration & " msec => " & Me.IterationsPerSecond & " 1/sec => "
+  str = FillBlank(Me.Name, 40) & " " & Me.Duration & " msec => " & Me.IterationsPerSecond & " 1/sec => "
   If Parent.Fastest.Duration = Me.Duration Then
     str = str & " Fastest !!"
   Else
