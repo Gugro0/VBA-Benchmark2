@@ -1,0 +1,11 @@
+Option Compare Database
+Option Explicit
+
+Public Function Benchmark() As clsBenchmark
+  Set Benchmark = New clsBenchmark
+End Function
+
+Public Function ObjectInfo(ByVal TheObject As Object) As clsObjectInfo
+  Set ObjectInfo = New clsObjectInfo
+  ObjectInfo.Initialize TheObject
+End Function

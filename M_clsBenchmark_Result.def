@@ -1,0 +1,55 @@
+Attribute VB_GlobalNameSpace = False
+Attribute VB_Creatable = False
+Attribute VB_PredeclaredId = False
+Attribute VB_Exposed = False
+Option Compare Database
+Option Explicit
+
+Private c_Name        As String
+Private c_Iterations  As Long
+Private c_Duration    As Long
+Private c_ParentGetter As clsParentGetter
+
+Public Sub Initialize(ByVal Name As String, ByVal Iterations As Long, ByVal Duration As Long, ByVal pg As clsParentGetter)
+  c_Name = Name
+  c_Iterations = Iterations
+  c_Duration = Duration
+  Set c_ParentGetter = pg
+End Sub
+
+Public Property Get Name() As String
+  Name = c_Name
+End Property
+Public Property Get Iterations() As Long
+  Iterations = c_Iterations
+End Property
+Public Property Get IterationsPerSecond() As Long
+  IterationsPerSecond = Int(Me.Iterations * 1000 / Me.Duration)
+End Property
+Public Property Get Duration() As Long
+  Duration = c_Duration
+End Property
+
+Public Function PercentSlower() As Double
+  PercentSlower = Round((1 - Parent.Fastest.Duration / Me.Duration) * 100, 2)
+End Function
+
+Public Function Result() As String
+  Dim str As String
+  
+  str = FillBlank(Me.Name, 30) & " " & Me.Duration & " msec => " & Me.IterationsPerSecond & " 1/sec => "
+  If Parent.Fastest.Duration = Me.Duration Then
+    str = str & " Fastest !!"
+  Else
+    str = str & PercentSlower & "% slower"
+  End If
+  Result = str
+End Function
+
+Private Function FillBlank(ByVal TheStr As String, TheLength As Integer) As String
+  FillBlank = Left$(TheStr + String(TheLength, " "), TheLength)
+End Function
+
+Private Property Get Parent() As clsBenchmark_Results
+  Set Parent = c_ParentGetter.GetParent
+End Property
