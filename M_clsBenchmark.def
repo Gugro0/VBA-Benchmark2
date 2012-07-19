@@ -1,0 +1,155 @@
+Attribute VB_GlobalNameSpace = False
+Attribute VB_Creatable = False
+Attribute VB_PredeclaredId = False
+Attribute VB_Exposed = False
+'---------------------------------------------------------------------------------------
+' Module    : clsBenchmark
+' Author    : K.Gundermann
+' Date      : 01.07.2012
+' Purpose   : Benchmarks your Code
+'             Create a Class with some Sub's
+'             For Running a single Benchmark:
+'               Benchmark.Run(New clsMyBenchmark).Report
+'             For running several Benchmarks:
+'               Benchmark.RunClasses("clsMyBenchmark clsOtherBench").Report
+'---------------------------------------------------------------------------------------
+
+Option Compare Database
+Option Explicit
+
+Private Const DEFAULT_ITERATIONS = 10000
+
+Private c_Results As clsBenchmark_Results
+Private c_Iterations As Long
+Private c_BaseDuration As Long
+
+Private Declare Function timeGetTime Lib "winmm.dll" () As Long ' in ms , Auflösung 1 ms  auf KDG
+
+
+Private Sub Class_Initialize()
+  Set c_Results = New clsBenchmark_Results
+  c_Iterations = DEFAULT_ITERATIONS
+End Sub
+
+Public Property Get Iterations() As Long
+  Iterations = c_Iterations
+End Property
+Public Property Let Iterations(ByVal Count As Long)
+  c_Iterations = Count
+End Property
+Public Function SetIterations(ByVal Count As Long) As clsBenchmark
+  c_Iterations = Count
+  Set SetIterations = Me
+End Function
+
+
+Public Function Run(ByVal BenchmarkClass As Object) As clsBenchmark
+  Dim v As Variant
+  Dim mi As TLI.MemberInfo
+  
+  With ObjectInfo(BenchmarkClass)
+    If .AllMembers.Count > 0 Then
+      Call Calibrate
+      For Each v In .AllMembers
+        Set mi = v
+        If mi.InvokeKind = INVOKE_FUNC Then
+          Call Run_SingleMethod(BenchmarkClass, mi.Name)
+        End If
+      Next
+    End If
+  End With
+  Set Run = Me
+End Function
+
+Public Function RunClasses(ByVal Classnames As String) As clsBenchmark
+  Dim arr() As String
+  Dim i As Integer
+  Dim obj As Object
+  
+  
+  arr = Split(Classnames)
+  For i = LBound(arr) To UBound(arr)
+    Call CreateFactory(arr(i))
+    Set obj = Application.Run("GetTestClass")
+    If Not obj Is Nothing Then
+      Run obj
+    End If
+  Next
+  Set RunClasses = Me
+End Function
+
+
+Public Property Get TestCount() As Integer
+  TestCount = c_Results.Count
+End Property
+
+Public Property Get Results() As clsBenchmark_Results
+  Set Results = c_Results
+End Property
+
+Public Function Report() As String
+  Dim str As String
+  Dim v As Variant
+  Dim res As clsBenchmark_Result
+  
+  str = "Results of Benchmark " & Now & vbCrLf
+  For Each v In Me.Results.AllResults
+    Set res = v
+    str = str & res.Result & vbCrLf
+  Next
+  
+  str = str & "The fastest Test was: " & Me.Results.Fastest.Name
+  Report = str
+  
+End Function
+
+' ----------------------------------------------------------------------------------
+
+Private Sub CreateFactory(ByVal Classname As String)
+  Dim mdl As Module
+  Dim str As String
+  Dim startLine As Long, startCol As Long
+  Dim EndLine As Long, EndCol As Long
+  
+  Set mdl = Access.Modules("__Factory")
+  If mdl.Find("Public Function GetTestClass", startLine, startCol, EndLine, EndCol) Then
+    mdl.DeleteLines startLine, EndLine - startLine + 1 + 3
+  End If
+  str = "Public Function GetTestClass as " & Classname & vbCrLf
+  str = str & "  Set GetTestClass = New " & Classname & vbCrLf
+  str = str & "End Function" & vbCrLf
+  Access.Modules("__Factory").AddFromString (str)
+End Sub
+
+
+Private Sub Calibrate()
+  Dim lStart As Long
+  Dim lStop  As Long
+  Dim lCount As Long
+  
+  lStart = timeGetTime
+  For lCount = 1 To Me.Iterations
+    ' Do Nothing
+  Next
+  lStop = timeGetTime
+  c_BaseDuration = lStop - lStart
+
+End Sub
+
+Private Sub Run_SingleMethod(ByVal TheClass As Object, MethodName As String)
+  Dim lStart As Long
+  Dim lStop  As Long
+  Dim lCount As Long
+  
+  lStart = timeGetTime
+  For lCount = 1 To Me.Iterations
+    Call TLI.InvokeHook(TheClass, MethodName, INVOKE_FUNC)
+  Next
+  lStop = timeGetTime
+  Call c_Results.Add(TypeName(TheClass) & "->" & MethodName, Me.Iterations, lStop - lStart - c_BaseDuration)
+  
+End Sub
+
+Private Sub Class_Terminate()
+  Set c_Results = Nothing
+End Sub

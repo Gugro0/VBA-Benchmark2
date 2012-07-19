@@ -1,0 +1,129 @@
+Attribute VB_GlobalNameSpace = False
+Attribute VB_Creatable = False
+Attribute VB_PredeclaredId = False
+Attribute VB_Exposed = True
+'---------------------------------------------------------------------------------------
+' Module    : clsObjectInfo
+' Author    : K.Gundermann
+' Date      : 27.04.2012
+' Purpose   : Uses TLI to call Functions By Name on a Object
+' Requires  : Reference to "TypeLib Information" ( C:\Windows\System32\TLBINF32.dll )
+'---------------------------------------------------------------------------------------
+
+Option Compare Database
+Option Explicit
+
+Private c_TheObject As Object
+Private c_iFaceInfo  As TLI.InterfaceInfo
+
+
+Public Sub Initialize(ByVal NewObject As Object)
+  Set Me.TheObject = NewObject
+End Sub
+
+Public Property Get TheObject() As Object
+  Set TheObject = c_TheObject
+End Property
+Public Property Set TheObject(ByVal NewObject As Object)
+  Set c_TheObject = NewObject
+  Set c_iFaceInfo = TLI.InterfaceInfoFromObject(TheObject)
+End Property
+
+
+Public Function HasProperty(ByVal PropertyName As String) As Boolean
+  Dim objItem As TLI.SearchItem
+  
+  Set objItem = GetItem(PropertyName)
+  If objItem Is Nothing Then Exit Function
+  HasProperty = (objItem.InvokeKinds And INVOKE_PROPERTYGET) <> 0
+End Function
+Public Function HasFunction(ByVal FunctionName As String) As Boolean
+  Dim objItem As TLI.SearchItem
+  
+  Set objItem = GetItem(FunctionName)
+  If objItem Is Nothing Then Exit Function
+  HasFunction = (objItem.InvokeKinds And INVOKE_FUNC) <> 0
+End Function
+Public Function AllMembers() As TLI.Members
+  Set AllMembers = c_iFaceInfo.Members
+End Function
+
+Public Property Get Property(ByVal PropertyName As String) As Variant
+  Dim objItem As TLI.SearchItem
+  
+   On Error GoTo Property_Error
+
+  Set objItem = GetItem(PropertyName)
+  If objItem Is Nothing Then Exit Function
+  
+    If objItem.InvokeKinds And INVOKE_PROPERTYGET Then
+      If objItem.InvokeKinds And INVOKE_PROPERTYPUTREF Then   ' Object
+        Set Property = TLI.InvokeHook(TheObject, objItem.MemberId, INVOKE_PROPERTYGET)
+      ElseIf Left(PropertyName, 3) = "obj" Then  ' BÄÄÄÄÄÄHHHH !!! auch Object
+        Set Property = TLI.InvokeHook(TheObject, objItem.MemberId, INVOKE_PROPERTYGET)
+      Else                                                    ' Var
+        Property = TLI.InvokeHook(TheObject, objItem.MemberId, INVOKE_PROPERTYGET)
+      End If
+    End If
+  
+  On Error GoTo 0
+  Exit Property
+
+Property_Error:
+  If Err.Number = 438 Then
+   Set Property = TLI.InvokeHook(TheObject, objItem.MemberId, INVOKE_PROPERTYGET)  ' Doppel BÄÄÄH
+  Else
+    MsgBox "Error " & Err.Number & " (" & Err.Description & ") in procedure Property of Klassenmodul clsObjectInfo"
+  End If
+End Property
+
+Public Property Let Property(ByVal PropertyName As String, ByVal TheValue As Variant)
+  Call TLI.InvokeHook(TheObject, PropertyName, INVOKE_PROPERTYPUT, TheValue)
+End Property
+
+Public Property Set Property(ByVal PropertyName As String, ByVal TheRef As Object)
+  Call TLI.InvokeHook(TheObject, PropertyName, INVOKE_PROPERTYPUTREF, TheRef)
+End Property
+
+
+Public Function CallFunction(ByVal FunctionName As String, ParamArray Params()) As Variant
+  Dim numArgs As Long
+  Dim i       As Long
+  Dim vTmpParams()
+  Dim vTmpParams2()
+  Dim vParams()
+  
+  vTmpParams = Params
+  Do
+    If UBound(vTmpParams) = -1 Then
+      CallFunction = TLI.InvokeHook(TheObject, FunctionName, INVOKE_FUNC)
+      Exit Do
+    ElseIf IsArray(vTmpParams(0)) Then
+      vTmpParams2 = vTmpParams(0)
+      vTmpParams = vTmpParams2
+    Else
+      numArgs = UBound(vTmpParams)
+      ReDim vParams(numArgs)
+      For i = 0 To numArgs
+        If IsObject(vTmpParams(numArgs - i)) Then
+          Set vParams(i) = vTmpParams(numArgs - i)
+        Else
+          vParams(i) = vTmpParams(numArgs - i)
+        End If
+      Next
+      CallFunction = TLI.InvokeHookArray(TheObject, FunctionName, INVOKE_FUNC, vParams)
+      Exit Do
+    End If
+  Loop
+End Function
+
+Private Function GetItem(ByVal ItemName As String) As TLI.SearchItem
+  Dim objItem As TLI.SearchItem
+  
+  For Each objItem In c_iFaceInfo.Members.GetFilteredMembers
+    If objItem.Name = ItemName Then
+      Set GetItem = objItem: Exit Function
+    End If
+  Next
+
+End Function

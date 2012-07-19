@@ -1,0 +1,76 @@
+Attribute VB_GlobalNameSpace = False
+Attribute VB_Creatable = False
+Attribute VB_PredeclaredId = False
+Attribute VB_Exposed = False
+Option Compare Database
+Option Explicit
+
+Private c_Results As Collection
+Private WithEvents c_ParentGetter As clsParentGetter
+Attribute c_ParentGetter.VB_VarHelpID = -1
+
+Private Sub Class_Initialize()
+  Set c_Results = New Collection
+  Set c_ParentGetter = New clsParentGetter
+End Sub
+
+Public Sub Add(ByVal Testname As String, ByVal Iterations As Long, ByVal Duration As Long)
+  Dim Result As clsBenchmark_Result
+  
+  Set Result = New clsBenchmark_Result
+  Call Result.Initialize(Testname, Iterations, Duration, c_ParentGetter)
+  c_Results.Add Result
+End Sub
+
+Public Property Get AllResults() As Collection
+  Set AllResults = c_Results
+End Property
+
+Public Property Get Count() As Integer
+  Count = c_Results.Count
+End Property
+
+Public Property Get Test(ByVal Index As Integer) As clsBenchmark_Result
+  Set Test = c_Results(Index)
+End Property
+
+Public Property Get Fastest() As clsBenchmark_Result
+  Dim v As Variant
+  Dim res As clsBenchmark_Result
+  Dim lMaxIter As Long
+  
+  For Each v In Me.AllResults
+    Set res = v
+    If res.IterationsPerSecond > lMaxIter Then
+      Set Fastest = res
+      lMaxIter = Fastest.IterationsPerSecond
+    End If
+  Next
+
+End Property
+
+Public Property Get Slowest() As clsBenchmark_Result
+  Dim v As Variant
+  Dim res As clsBenchmark_Result
+  Dim lMinIter As Long
+  
+  lMinIter = 99999999
+  For Each v In Me.AllResults
+    Set res = v
+    If res.IterationsPerSecond < lMinIter Then
+      Set Slowest = res
+      lMinIter = Fastest.IterationsPerSecond
+    End If
+  Next
+
+End Property
+
+' -------------------------------------------------------------------------
+
+Private Sub c_ParentGetter_QueryParent(ByRef Parent As Object)
+ Set Parent = Me
+End Sub
+
+Private Sub Class_Terminate()
+  Set c_Results = Nothing
+End Sub
