@@ -66,7 +66,6 @@ Public Function RunClasses(ByVal Classnames As String) As clsBenchmark
   Dim i As Integer
   Dim obj As Object
   
-  
   arr = Split(Classnames)
   For i = LBound(arr) To UBound(arr)
     Call CreateFactory(arr(i))
@@ -75,6 +74,7 @@ Public Function RunClasses(ByVal Classnames As String) As clsBenchmark
       Run obj
     End If
   Next
+  DestroyFactory
   Set RunClasses = Me
 End Function
 
@@ -121,6 +121,9 @@ Private Sub CreateFactory(ByVal Classname As String)
   Access.Modules("__Factory").AddFromString (str)
 End Sub
 
+Private Sub DestroyFactory()
+  DoCmd.DeleteObject acModule, "__Factory"
+End Sub
 
 Private Sub Calibrate()
   Dim lStart As Long
