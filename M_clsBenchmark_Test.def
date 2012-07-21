@@ -2,6 +2,13 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
+'---------------------------------------------------------------------------------------
+' Module    : clsBenchmark_Test
+' Author    : K.Gundermann
+' Date      : 21.07.2012
+' Purpose   : Unit Test for clsBenchmark
+'---------------------------------------------------------------------------------------
+
 Option Compare Text
 Option Explicit
 
@@ -28,7 +35,7 @@ End Sub
 Public Sub CreateBenchmark_withClass_has4Tests()
   
   ' Act
-  objBenchmark.Run New clsBench_Simple
+  objBenchmark.Run New clsSimple_Bench
   
   ' Assert
   Assert.That objBenchmark.TestCount, Iz.EqualTo(4)
@@ -39,20 +46,20 @@ Public Sub CreateBenchmark_withClass_hasTestname()
   ' Arrange
   
   ' Act
-  objBenchmark.Run New clsBench_Simple
+  objBenchmark.Run New clsSimple_Bench
   
   ' Assert
-  Assert.AreEqualStrings "clsBench_Simple->IntegerBenchmark", objBenchmark.Results.Test(1).Name
-  Assert.AreEqualStrings "clsBench_Simple->LongBenchmark", objBenchmark.Results.Test(2).Name
-  Assert.AreEqualStrings "clsBench_Simple->DoubleBenchmark", objBenchmark.Results.Test(3).Name
-  Assert.AreEqualStrings "clsBench_Simple->CurrencyBenchmark", objBenchmark.Results.Test(4).Name
+  Assert.AreEqualStrings "clsSimple_Bench->IntegerBenchmark", objBenchmark.Results.Test(1).Name
+  Assert.AreEqualStrings "clsSimple_Bench->LongBenchmark", objBenchmark.Results.Test(2).Name
+  Assert.AreEqualStrings "clsSimple_Bench->DoubleBenchmark", objBenchmark.Results.Test(3).Name
+  Assert.AreEqualStrings "clsSimple_Bench->CurrencyBenchmark", objBenchmark.Results.Test(4).Name
   
 End Sub
 
 Public Sub a_Testrun_needs_some_time()
 
   ' Act
-  objBenchmark.Run New clsBench_Simple
+  objBenchmark.Run New clsSimple_Bench
   
   ' Assert
   Assert.That objBenchmark.Results.Test(1).Duration, Iz.GreaterThan(1)
@@ -62,7 +69,7 @@ End Sub
 Public Sub a_Testrun_with_more_iteration_needs_more_time()
 
   ' Act
-  objBenchmark.SetIterations(objBenchmark.Iterations * 10).Run New clsBench_Simple
+  objBenchmark.SetIterations(objBenchmark.Iterations * 10).Run New clsSimple_Bench
   
   ' Assert
   Assert.That objBenchmark.Results.Test(1).Duration, Iz.GreaterThan(10)
@@ -72,18 +79,18 @@ End Sub
 Public Sub we_have_a_TestResult()
   
   ' Act
-  objBenchmark.Run New clsBench_Simple
+  objBenchmark.Run New clsSimple_Bench
   
   ' Assert
   With objBenchmark.Results.Test(1)
-    Assert.That .Result, Text.Matches("clsBench_Simple->IntegerBenchmark .*[0-9]* msec .* ")
+    Assert.That .Result, Text.Matches("clsSimple_Bench->IntegerBenchmark .*[0-9]* msec .* ")
   End With
   
 End Sub
 
 Public Sub We_have_a_fastest_Test()
   ' Act
-  objBenchmark.Run New clsBench_Simple
+  objBenchmark.Run New clsSimple_Bench
   ' Assert
   Assert.IsNotNothing objBenchmark.Results.Fastest
 End Sub
@@ -91,7 +98,7 @@ End Sub
 Public Sub We_Have_a_TestReport()
 
   ' Act
-  objBenchmark.Run New clsBench_Simple
+  objBenchmark.Run New clsSimple_Bench
   ' Assert
   Assert.That objBenchmark.Report, Iz.[Not].EqualTo("")
   Debug.Print objBenchmark.Report
@@ -101,7 +108,7 @@ End Sub
 
 Public Sub We_can_run_Tests_by_Name()
   ' Act
-  objBenchmark.RunClasses "clsBench_Simple clsBench_Strings"
+  objBenchmark.RunClasses "clsSimple_Bench clsBench_Strings"
   
   ' Assert
   Assert.That objBenchmark.TestCount, Iz.EqualTo(5)
