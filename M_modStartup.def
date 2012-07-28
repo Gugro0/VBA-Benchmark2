@@ -1,0 +1,6 @@
+Option Compare Database
+Option Explicit
+
+Public Function BenchmarkForm_Open()
+  DoCmd.OpenForm "frmBenchmark"
+End Function

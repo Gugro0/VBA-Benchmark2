@@ -1,11 +1,23 @@
 Option Compare Database
 Option Explicit
 
-Public Function Benchmark() As clsBenchmark
-  Set Benchmark = New clsBenchmark
+Private c_Benchmark As fctBenchmark
+
+Public Function Benchmark() As fctBenchmark
+  If c_Benchmark Is Nothing Then Set c_Benchmark = New fctBenchmark
+  Set Benchmark = c_Benchmark
 End Function
 
 Public Function ObjectInfo(ByVal TheObject As Object) As clsObjectInfo
   Set ObjectInfo = New clsObjectInfo
   ObjectInfo.Initialize TheObject
 End Function
+
+'Public Function VBWatchdogStart()
+'  ErrEx.Enable "ErrProc"
+'End Function
+'
+'Public Sub ErrProc()
+'  If ErrEx.State = OnErrorResumeNext Then Exit Sub
+'  ErrEx.ShowErrorDialog
+'End Sub

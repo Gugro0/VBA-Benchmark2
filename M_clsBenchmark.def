@@ -18,12 +18,15 @@ Option Compare Database
 Option Explicit
 
 Private Const DEFAULT_ITERATIONS = 10000
+Private Const FACTORY_NAME = "__Bench_Factory"
+Private Const FACTORY_PROC_NAME = "GetBenchClass"
 
-Private c_Results As clsBenchmark_Results
-Private c_Iterations As Long
-Private c_BaseDuration As Long
+Private c_ClassName     As String
+Private c_Results       As clsBenchmark_Results
+Private c_Iterations    As Long
+Private c_BaseDuration  As Long
 
-Private Declare Function timeGetTime Lib "winmm.dll" () As Long ' in ms , Auflösung 1 ms  auf KDG
+Private Declare Function timeGetTime Lib "winmm.dll" () As Long ' in ms , Auflösung 1 ms
 
 
 Private Sub Class_Initialize()
@@ -43,17 +46,29 @@ Public Function SetIterations(ByVal Count As Long) As clsBenchmark
 End Function
 
 
-Public Function Run(ByVal BenchmarkClass As Object) As clsBenchmark
-  Dim v As Variant
+Public Function Run(ByVal BenchmarkClass As Variant, Optional ByVal Iterations As Long = 0) As clsBenchmark
+  Dim objBench As Object
   Dim mi As TLI.MemberInfo
   
-  With ObjectInfo(BenchmarkClass)
+  If Iterations > 0 Then Me.Iterations = Iterations
+  
+  If VarType(BenchmarkClass) = vbObject Then
+    Set objBench = BenchmarkClass
+  ElseIf VarType(BenchmarkClass) = vbString Then
+    Set objBench = GetClassObj(BenchmarkClass)
+  Else
+    Err.Raise vbObject, , "Unknown Class Description: " & BenchmarkClass
+    Exit Function
+  End If
+  If objBench Is Nothing Then Exit Function
+    
+  With ObjectInfo(objBench)
+    c_ClassName = .ObjectName
     If .AllMembers.Count > 0 Then
       Call Calibrate
-      For Each v In .AllMembers
-        Set mi = v
+      For Each mi In .AllMembers
         If mi.InvokeKind = INVOKE_FUNC Then
-          Call Run_SingleMethod(BenchmarkClass, mi.Name)
+          Call Run_SingleMethod(objBench, mi.Name)
         End If
       Next
     End If
@@ -61,23 +76,11 @@ Public Function Run(ByVal BenchmarkClass As Object) As clsBenchmark
   Set Run = Me
 End Function
 
-Public Function RunClasses(ByVal Classnames As String) As clsBenchmark
-  Dim arr() As String
-  Dim i As Integer
-  Dim obj As Object
-  
-  arr = Split(Classnames)
-  For i = LBound(arr) To UBound(arr)
-    Call CreateFactory(arr(i))
-    Set obj = Application.Run("GetTestClass")
-    If Not obj Is Nothing Then
-      Run obj
-    End If
-  Next
-  DestroyFactory
-  Set RunClasses = Me
+Public Function GetClassObj(ByVal Classname As String) As Object
+  If CreateFactory(Classname) Then
+    Set GetClassObj = Application.Run(FACTORY_PROC_NAME)
+  End If
 End Function
-
 
 Public Property Get TestCount() As Integer
   TestCount = c_Results.Count
@@ -87,17 +90,20 @@ Public Property Get Results() As clsBenchmark_Results
   Set Results = c_Results
 End Property
 
+Public Property Get Title() As String
+  Title = "Running Benchmark " & c_ClassName & " " & Now
+End Property
+
 Public Function Report() As String
   Dim str As String
   Dim v As Variant
   Dim res As clsBenchmark_Result
   
-  str = "Results of Benchmark " & Now & vbCrLf
+  str = Me.Title & vbCrLf
   For Each v In Me.Results.AllResults
     Set res = v
     str = str & res.Result & vbCrLf
   Next
-  
   str = str & "The fastest Test was: " & Me.Results.Fastest.Name
   Report = str
   
@@ -105,27 +111,65 @@ End Function
 
 ' ----------------------------------------------------------------------------------
 
-Private Sub CreateFactory(ByVal Classname As String)
+Private Function CreateFactory(ByVal Classname As String) As Boolean
   Dim mdl As Module
+  Dim VBKomp As VBComponent
+  Dim strName As String
   Dim str As String
   Dim startLine As Long, startCol As Long
   Dim EndLine As Long, EndCol As Long
   
-  Set mdl = Access.Modules("__Factory")
-  If mdl.Find("Public Function GetTestClass", startLine, startCol, EndLine, EndCol) Then
-    mdl.DeleteLines startLine, EndLine - startLine + 1 + 3
-  End If
-  str = "Public Function GetTestClass as " & Classname & vbCrLf
-  str = str & "  Set GetTestClass = New " & Classname & vbCrLf
+
+  str = "Public Function " & FACTORY_PROC_NAME & " as " & Classname & vbCrLf
+  str = str & "  Set " & FACTORY_PROC_NAME & " = New " & Classname & vbCrLf
   str = str & "End Function" & vbCrLf
-  Access.Modules("__Factory").AddFromString (str)
-End Sub
+  
+  On Error Resume Next
+    Set mdl = Access.Modules(Classname)
+    If Err = 9 Then
+      On Error GoTo 0
+      Err.Raise 9, , "Can not find Benchmark Class " & Classname
+      Exit Function
+    End If
+    
+    Set mdl = Access.Modules(FACTORY_NAME)
+    If Err = 9 Then
+      On Error GoTo 0
+      Set VBKomp = Application.VBE.ActiveVBProject.VBComponents.Add(vbext_ct_StdModule)
+      VBKomp.Name = FACTORY_NAME
+      VBKomp.CodeModule.AddFromString str
+      ' Application.DoCmd.Save acModule, FACTORY_NAME
+'      DoCmd.RunCommand acCmdNewObjectModule
+'      Set mdl = Access.Modules(Access.Modules.Count - 1) '    Access.Modules(Application.CurrentObjectName)
+'      strName = mdl.Name
+'      'Insert a bogus line so that we can close the module; BIG BAD BUG ?!?
+'      mdl.InsertLines 3, "'Created on: " & Now()
+'      DoCmd.Close acModule, strName, acSaveYes
+'      DoCmd.SelectObject acModule, strName, True
+'      DoCmd.Rename FACTORY_NAME, acModule, strName
+'      DoCmd.OpenModule FACTORY_NAME
+'      Set mdl = Access.Modules(FACTORY_NAME)
+    Else
+      If mdl.Find("Public Function GetTestClass", startLine, startCol, EndLine, EndCol) Then
+        mdl.DeleteLines startLine, EndLine - startLine + 1 + 3
+      End If
+      mdl.AddFromString str
+    End If
+  'DoCmd.Close acModule, FACTORY_NAME, acSaveYes
+  CreateFactory = True
+End Function
 
 Private Sub DestroyFactory()
-  DoCmd.DeleteObject acModule, "__Factory"
+  On Error Resume Next
+    Application.DoCmd.DeleteObject acModule, FACTORY_NAME
+  On Error GoTo 0
 End Sub
 
 Private Sub Calibrate()
+  c_BaseDuration = MeasureEmptyLoop
+End Sub
+
+Private Function MeasureEmptyLoop() As Long
   Dim lStart As Long
   Dim lStop  As Long
   Dim lCount As Long
@@ -135,11 +179,10 @@ Private Sub Calibrate()
     ' Do Nothing
   Next
   lStop = timeGetTime
-  c_BaseDuration = lStop - lStart
+  MeasureEmptyLoop = lStop - lStart
+End Function
 
-End Sub
-
-Private Sub Run_SingleMethod(ByVal TheClass As Object, MethodName As String)
+Private Sub Run_SingleMethod(ByVal TheClass As Object, ByVal MethodName As String)
   Dim lStart As Long
   Dim lStop  As Long
   Dim lCount As Long
@@ -149,10 +192,11 @@ Private Sub Run_SingleMethod(ByVal TheClass As Object, MethodName As String)
     Call TLI.InvokeHook(TheClass, MethodName, INVOKE_FUNC)
   Next
   lStop = timeGetTime
-  Call c_Results.Add(TypeName(TheClass) & "->" & MethodName, Me.Iterations, lStop - lStart - c_BaseDuration)
+  Call c_Results.Add(MethodName, Me.Iterations, lStop - lStart - c_BaseDuration)
   
 End Sub
 
 Private Sub Class_Terminate()
+  DestroyFactory
   Set c_Results = Nothing
 End Sub
