@@ -29,6 +29,9 @@ Public Property Set TheObject(ByVal NewObject As Object)
   Set c_iFaceInfo = TLI.InterfaceInfoFromObject(TheObject)
 End Property
 
+Public Property Get ObjectName() As String
+  ObjectName = TypeName(c_TheObject)
+End Property
 
 Public Function HasProperty(ByVal PropertyName As String) As Boolean
   Dim objItem As TLI.SearchItem

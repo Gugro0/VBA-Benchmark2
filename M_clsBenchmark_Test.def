@@ -30,6 +30,13 @@ Public Sub Setup()
   Set objBenchmark = New clsBenchmark
 End Sub
 
+Public Sub CreateBenchmark_withClass_hasClassNameasDescription()
+  ' Act
+  objBenchmark.Run New clsSimple_Bench
+  
+  ' Assert
+  Assert.That objBenchmark.Title, Text.Matches("Running Benchmark clsSimple_Bench")
+End Sub
 
 ' AccUnit:Tags(Example, Simple Test)
 Public Sub CreateBenchmark_withClass_has4Tests()
@@ -101,17 +108,17 @@ Public Sub We_Have_a_TestReport()
   objBenchmark.Run New clsSimple_Bench
   ' Assert
   Assert.That objBenchmark.Report, Iz.[Not].EqualTo("")
-  Debug.Print objBenchmark.Report
+  Assert.That objBenchmark.Report, Text.Contains("Fastest")
 End Sub
 
 ' ------------------------------------------------------------------------
 
-Public Sub We_can_run_Tests_by_Name()
+Public Sub We_can_run_Test_by_Name()
   ' Act
-  objBenchmark.RunClasses "clsSimple_Bench clsBench_Strings"
+  objBenchmark.Run "clsSimple_Bench"
   
   ' Assert
-  Assert.That objBenchmark.TestCount, Iz.EqualTo(5)
+  Assert.That objBenchmark.TestCount, Iz.EqualTo(4)
   Debug.Print objBenchmark.Report
 
 End Sub

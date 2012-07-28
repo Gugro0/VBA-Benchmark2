@@ -1,0 +1,46 @@
+Attribute VB_GlobalNameSpace = False
+Attribute VB_Creatable = False
+Attribute VB_PredeclaredId = False
+Attribute VB_Exposed = False
+'---------------------------------------------------------------------------------------
+' Module    : fctBenchmark
+' Author    : K.Gundermann
+' Date      : 28.07.2012
+' Purpose   : Creates a clsBenchmark Object
+'---------------------------------------------------------------------------------------
+
+Option Compare Database
+Option Explicit
+
+'---------------------------------------------------------------------------------------
+' Procedure : Run
+' Author    : K.Gundermann
+' Date      : 28.07.2012
+' Purpose   : Runs a single BenchmarkClass
+' Options   : Either an already instanciated BenchmarkClass Object
+'             or the Name of the BenchmarkClass
+'---------------------------------------------------------------------------------------
+'
+Public Function Run(ByVal BenchmarkClass As Variant, Optional ByVal Iterations As Long = 0) As clsBenchmark
+  With New clsBenchmark
+    Set Run = .Run(BenchmarkClass, Iterations)
+  End With
+End Function
+
+'---------------------------------------------------------------------------------------
+' Procedure : RunClasses
+' Author    : K.Gundermann
+' Date      : 23.07.2012
+' Purpose   : Run several Benchmarks ( delimited by spaces )
+'---------------------------------------------------------------------------------------
+'
+Public Function RunClasses(ByVal ClassNames As String) As String
+  Dim arr() As String
+  Dim i As Integer
+  
+  arr = Split(ClassNames)
+  For i = LBound(arr) To UBound(arr)
+    RunClasses = RunClasses & Run(arr(i)).Report & vbCrLf
+  Next
+
+End Function
