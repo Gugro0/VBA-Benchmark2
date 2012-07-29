@@ -17,13 +17,16 @@ Attribute VB_Exposed = False
 Option Compare Database
 Option Explicit
 
-Private Const DEFAULT_ITERATIONS = 10000
+'Private Const DEFAULT_ITERATIONS = 10000
+Private Const DEFAULT_TIMEOUT = 200     ' ms
+Private Const MINIMUM_ITERATIONS = 10
 Private Const FACTORY_NAME = "__Bench_Factory"
 Private Const FACTORY_PROC_NAME = "GetBenchClass"
 
 Private c_ClassName     As String
 Private c_Results       As clsBenchmark_Results
-Private c_Iterations    As Long
+'Private c_Iterations    As Long
+Private c_Timeout       As Long
 Private c_BaseDuration  As Long
 
 Private Declare Function timeGetTime Lib "winmm.dll" () As Long ' in ms , Auflösung 1 ms
@@ -31,26 +34,38 @@ Private Declare Function timeGetTime Lib "winmm.dll" () As Long ' in ms , Auflös
 
 Private Sub Class_Initialize()
   Set c_Results = New clsBenchmark_Results
-  c_Iterations = DEFAULT_ITERATIONS
+'  c_Iterations = DEFAULT_ITERATIONS
+  c_Timeout = DEFAULT_TIMEOUT
 End Sub
 
-Public Property Get Iterations() As Long
-  Iterations = c_Iterations
+'Public Property Get Iterations() As Long
+'  Iterations = c_Iterations
+'End Property
+'Public Property Let Iterations(ByVal Count As Long)
+'  c_Iterations = Count
+'End Property
+'Public Function SetIterations(ByVal Count As Long) As clsBenchmark
+'  c_Iterations = Count
+'  Set SetIterations = Me
+'End Function
+Public Property Get Timeout() As Long
+  Timeout = c_Timeout
 End Property
-Public Property Let Iterations(ByVal Count As Long)
-  c_Iterations = Count
+Public Property Let Timeout(ByVal ms As Long)
+  c_Timeout = ms
 End Property
-Public Function SetIterations(ByVal Count As Long) As clsBenchmark
-  c_Iterations = Count
-  Set SetIterations = Me
+Public Function SetTimeout(ByVal ms As Long) As clsBenchmark
+  c_Timeout = ms
+  Set SetTimeout = Me
 End Function
 
 
-Public Function Run(ByVal BenchmarkClass As Variant, Optional ByVal Iterations As Long = 0) As clsBenchmark
+Public Function Run(ByVal BenchmarkClass As Variant, Optional ByVal Timeout As Long = 0) As clsBenchmark
   Dim objBench As Object
   Dim mi As TLI.MemberInfo
   
-  If Iterations > 0 Then Me.Iterations = Iterations
+  ' If Iterations > 0 Then Me.Iterations = Iterations
+  If Timeout > 0 Then Me.Timeout = Timeout
   
   If VarType(BenchmarkClass) = vbObject Then
     Set objBench = BenchmarkClass
@@ -65,7 +80,7 @@ Public Function Run(ByVal BenchmarkClass As Variant, Optional ByVal Iterations A
   With ObjectInfo(objBench)
     c_ClassName = .ObjectName
     If .AllMembers.Count > 0 Then
-      Call Calibrate
+      ' Call Calibrate
       For Each mi In .AllMembers
         If mi.InvokeKind = INVOKE_FUNC Then
           Call Run_SingleMethod(objBench, mi.Name)
@@ -165,22 +180,22 @@ Private Sub DestroyFactory()
   On Error GoTo 0
 End Sub
 
-Private Sub Calibrate()
-  c_BaseDuration = MeasureEmptyLoop
-End Sub
-
-Private Function MeasureEmptyLoop() As Long
-  Dim lStart As Long
-  Dim lStop  As Long
-  Dim lCount As Long
-  
-  lStart = timeGetTime
-  For lCount = 1 To Me.Iterations
-    ' Do Nothing
-  Next
-  lStop = timeGetTime
-  MeasureEmptyLoop = lStop - lStart
-End Function
+'Private Sub Calibrate()
+'  c_BaseDuration = MeasureEmptyLoop
+'End Sub
+'
+'Private Function MeasureEmptyLoop() As Long
+'  Dim lStart As Long
+'  Dim lStop  As Long
+'  Dim lCount As Long
+'
+'  lStart = timeGetTime
+'  For lCount = 1 To Me.Iterations
+'    ' Do Nothing
+'  Next
+'  lStop = timeGetTime
+'  MeasureEmptyLoop = lStop - lStart
+'End Function
 
 Private Sub Run_SingleMethod(ByVal TheClass As Object, ByVal MethodName As String)
   Dim lStart As Long
@@ -188,11 +203,17 @@ Private Sub Run_SingleMethod(ByVal TheClass As Object, ByVal MethodName As Strin
   Dim lCount As Long
   
   lStart = timeGetTime
-  For lCount = 1 To Me.Iterations
+  'For lCount = 1 To Me.Iterations
+  Do While True
+    If (lCount > MINIMUM_ITERATIONS) Then
+      If ((timeGetTime - lStart) > c_Timeout) Then Exit Do
+    End If
+    lCount = lCount + 1
     Call TLI.InvokeHook(TheClass, MethodName, INVOKE_FUNC)
-  Next
+  Loop
+  'Next
   lStop = timeGetTime
-  Call c_Results.Add(MethodName, Me.Iterations, lStop - lStart - c_BaseDuration)
+  Call c_Results.Add(MethodName, lCount, lStop - lStart - c_BaseDuration)
   
 End Sub
 

@@ -2,6 +2,13 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
+'---------------------------------------------------------------------------------------
+' Module    : clsBenchmark_Results
+' Author    : K.Gundermann
+' Date      : 28.07.2012
+' Purpose   : Holds a collection of clsBenchmark_Result's
+'---------------------------------------------------------------------------------------
+
 Option Compare Database
 Option Explicit
 
@@ -22,12 +29,12 @@ Public Sub Add(ByVal Testname As String, ByVal Iterations As Long, ByVal Duratio
   c_Results.Add Result
 End Sub
 
-Public Property Get AllResults() As Collection
-  Set AllResults = c_Results
-End Property
-
 Public Property Get Count() As Integer
   Count = c_Results.Count
+End Property
+
+Public Property Get AllResults() As Collection
+  Set AllResults = c_Results
 End Property
 
 Public Property Get Test(ByVal Index As Integer) As clsBenchmark_Result

@@ -1,6 +1,6 @@
 Version =20
 VersionRequired =20
-Checksum =921930770
+Checksum =-1905079337
 Begin Form
     PopUp = NotDefault
     Modal = NotDefault
@@ -203,6 +203,7 @@ Begin Form
             End
             Begin
                 Begin ComboBox
+                    RowSourceTypeInt =1
                     OverlapFlags =85
                     IMESentenceMode =3
                     Left =283
@@ -213,7 +214,7 @@ Begin Form
                         0x8f7540409420b34eaba2ac1c29a7b446
                     End
                     Name ="ctlClasses"
-                    RowSourceType ="Table/Query"
+                    RowSourceType ="Value List"
 
                     LayoutCachedLeft =283
                     LayoutCachedTop =517
@@ -305,7 +306,7 @@ Begin Form
                     Width =1761
                     Height =315
                     TabIndex =1
-                    Name ="ctlIterations"
+                    Name ="ctlTimeout"
                     GUID = Begin
                         0x426e073b1e96114490e49f574c714886
                     End
@@ -322,7 +323,7 @@ Begin Form
                             Width =1035
                             Height =315
                             Name ="Bezeichnungsfeld7"
-                            Caption ="Iterations:"
+                            Caption ="Timeout:"
                             GUID = Begin
                                 0x0fcdf7690f37324eb7a91e2bb129d78d
                             End
@@ -354,13 +355,12 @@ Option Explicit
 
 
 Private Sub Form_Open(Cancel As Integer)
-  Me.ctlClasses.RowSourceType = "Wertliste"
   Me.ctlClasses.RowSource = GetBenchmarkClasses
 End Sub
 
 Private Sub cmdRun_Click()
   If Nz(Me.ctlClasses) <> "" Then
-    With Benchmark.Run(Me.ctlClasses, Nz(Me.ctlIterations))
+    With Benchmark.Run(Me.ctlClasses, Nz(Me.ctlTimeout))
       Me.ctlResult = .Report
     End With
   End If
