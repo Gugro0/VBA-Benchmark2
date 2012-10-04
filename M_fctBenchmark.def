@@ -21,9 +21,9 @@ Option Explicit
 '             or the Name of the BenchmarkClass
 '---------------------------------------------------------------------------------------
 '
-Public Function Run(ByVal BenchmarkClass As Variant, Optional ByVal Iterations As Long = 0) As clsBenchmark
+Public Function Run(ByVal BenchmarkClass As Variant, Optional ByVal Timeout As Long) As clsBenchmark
   With New clsBenchmark
-    Set Run = .Run(BenchmarkClass, Iterations)
+    Set Run = .Run(BenchmarkClass, Timeout)
   End With
 End Function
 

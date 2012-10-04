@@ -28,31 +28,46 @@ End Sub
 Public Property Get Name() As String
   Name = c_Name
 End Property
+Public Property Get ID() As Long
+  ID = ObjPtr(Me)
+End Property
 Public Property Get Iterations() As Long
   Iterations = c_Iterations
 End Property
 Public Property Get IterationsPerSecond() As Long
   IterationsPerSecond = Int(Me.Iterations * 1000 / Me.Duration)
 End Property
-Public Property Get Duration() As Long
+Public Property Get TimePerIteration() As Double  ' in msec
+  TimePerIteration = Me.Duration / Me.Iterations
+End Property
+Public Property Get Duration() As Long            ' in msec
   Duration = c_Duration
 End Property
 
 Public Function PercentSlower() As Double
-  PercentSlower = Round((1 - Me.Iterations / Parent.Fastest.Iterations) * 100, 2)
+  PercentSlower = Round((1 - Me.IterationsPerSecond / Parent.Fastest.IterationsPerSecond) * 100, 2)
 End Function
 
 Public Function Result() As String
   Dim str As String
   
-  str = FillBlank(Me.Name, 40) & " " & Me.Duration & " msec => " & Me.IterationsPerSecond & " 1/sec => "
-  If Parent.Fastest.Iterations = Me.Iterations Then
+  str = FillBlank(Me.Name, 40) & " " & Me.Duration & " msec => " & Me.IterationsPerSecond & " Iter/sec => "
+  If Parent.Fastest.ID = Me.ID Then
     str = str & " Fastest !!"
   Else
     str = str & PercentSlower & "% slower"
   End If
   Result = str
 End Function
+
+Public Function Speed() As String
+  Dim lFactor As Long
+  
+  lFactor = 10 ^ Int(Log10(IterationsPerSecond) + 1)
+  
+  Speed = lFactor & " Iterations in " & Format(Me.TimePerIteration * lFactor / 1000, "0.00") & " sec"
+End Function
+
 
 Private Function FillBlank(ByVal TheStr As String, TheLength As Integer) As String
   FillBlank = Left$(TheStr + String(TheLength, " "), TheLength)

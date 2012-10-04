@@ -12,12 +12,13 @@ Attribute VB_Exposed = False
 '               Benchmark.Run(New clsMyBenchmark).Report
 '             For running several Benchmarks:
 '               Benchmark.RunClasses("clsMyBenchmark clsOtherBench").Report
+' Updates    : 30.07.12 Changed to Timeout Model
+'              02.10.12 Code cleanup + Setup/Teardown methods
 '---------------------------------------------------------------------------------------
 
 Option Compare Database
 Option Explicit
 
-'Private Const DEFAULT_ITERATIONS = 10000
 Private Const DEFAULT_TIMEOUT = 200     ' ms
 Private Const MINIMUM_ITERATIONS = 10
 Private Const FACTORY_NAME = "__Bench_Factory"
@@ -25,7 +26,6 @@ Private Const FACTORY_PROC_NAME = "GetBenchClass"
 
 Private c_ClassName     As String
 Private c_Results       As clsBenchmark_Results
-'Private c_Iterations    As Long
 Private c_Timeout       As Long
 Private c_BaseDuration  As Long
 
@@ -34,20 +34,9 @@ Private Declare Function timeGetTime Lib "winmm.dll" () As Long ' in ms , Auflös
 
 Private Sub Class_Initialize()
   Set c_Results = New clsBenchmark_Results
-'  c_Iterations = DEFAULT_ITERATIONS
   c_Timeout = DEFAULT_TIMEOUT
 End Sub
 
-'Public Property Get Iterations() As Long
-'  Iterations = c_Iterations
-'End Property
-'Public Property Let Iterations(ByVal Count As Long)
-'  c_Iterations = Count
-'End Property
-'Public Function SetIterations(ByVal Count As Long) As clsBenchmark
-'  c_Iterations = Count
-'  Set SetIterations = Me
-'End Function
 Public Property Get Timeout() As Long
   Timeout = c_Timeout
 End Property
@@ -64,7 +53,6 @@ Public Function Run(ByVal BenchmarkClass As Variant, Optional ByVal Timeout As L
   Dim objBench As Object
   Dim mi As TLI.MemberInfo
   
-  ' If Iterations > 0 Then Me.Iterations = Iterations
   If Timeout > 0 Then Me.Timeout = Timeout
   
   If VarType(BenchmarkClass) = vbObject Then
@@ -119,7 +107,9 @@ Public Function Report() As String
     Set res = v
     str = str & res.Result & vbCrLf
   Next
-  str = str & "The fastest Test was: " & Me.Results.Fastest.Name
+  With Me.Results.Fastest
+    str = str & "The fastest Test was: " & .Name & " ( " & .Speed & " )"
+  End With
   Report = str
   
 End Function
@@ -134,8 +124,7 @@ Private Function CreateFactory(ByVal Classname As String) As Boolean
   Dim startLine As Long, startCol As Long
   Dim EndLine As Long, EndCol As Long
   
-
-  str = "Public Function " & FACTORY_PROC_NAME & " as " & Classname & vbCrLf
+  str = str & "Public Function " & FACTORY_PROC_NAME & " as " & Classname & vbCrLf
   str = str & "  Set " & FACTORY_PROC_NAME & " = New " & Classname & vbCrLf
   str = str & "End Function" & vbCrLf
   
@@ -147,12 +136,16 @@ Private Function CreateFactory(ByVal Classname As String) As Boolean
       Exit Function
     End If
     
-    Set mdl = Access.Modules(FACTORY_NAME)
-    If Err = 9 Then
-      On Error GoTo 0
-      Set VBKomp = Application.VBE.ActiveVBProject.VBComponents.Add(vbext_ct_StdModule)
-      VBKomp.Name = FACTORY_NAME
-      VBKomp.CodeModule.AddFromString str
+    'Set mdl = Access.Modules(FACTORY_NAME)
+    DestroyFactory
+    'If Err = 9 Then
+      'On Error GoTo 0
+      With MainApp_Project
+        Set VBKomp = .VBComponents.Add(vbext_ct_StdModule)
+        VBKomp.Name = FACTORY_NAME
+        VBKomp.CodeModule.AddFromString str
+      End With
+      
       ' Application.DoCmd.Save acModule, FACTORY_NAME
 '      DoCmd.RunCommand acCmdNewObjectModule
 '      Set mdl = Access.Modules(Access.Modules.Count - 1) '    Access.Modules(Application.CurrentObjectName)
@@ -164,19 +157,35 @@ Private Function CreateFactory(ByVal Classname As String) As Boolean
 '      DoCmd.Rename FACTORY_NAME, acModule, strName
 '      DoCmd.OpenModule FACTORY_NAME
 '      Set mdl = Access.Modules(FACTORY_NAME)
-    Else
-      If mdl.Find("Public Function GetTestClass", startLine, startCol, EndLine, EndCol) Then
-        mdl.DeleteLines startLine, EndLine - startLine + 1 + 3
-      End If
-      mdl.AddFromString str
-    End If
+'    Else
+      'If mdl.Find("Public Function GetTestClass", startLine, startCol, EndLine, EndCol) Then
+      '  mdl.DeleteLines startLine, 99999 ' EndLine - startLine + 1 + 3
+      'End If
+'      mdl.DeleteLines 1, mdl.CountOfLines
+'      mdl.AddFromString str
+'    End If
   'DoCmd.Close acModule, FACTORY_NAME, acSaveYes
   CreateFactory = True
 End Function
 
+Private Function MainApp_Project() As VBProject
+  Static proj As VBProject
+  
+  If proj Is Nothing Then
+  
+  For Each proj In Application.VBE.VBProjects
+    If proj.FileName = Application.CurrentProject.FullName Then Exit For
+  Next
+  End If
+  Set MainApp_Project = proj
+    
+End Function
+
 Private Sub DestroyFactory()
   On Error Resume Next
-    Application.DoCmd.DeleteObject acModule, FACTORY_NAME
+    With MainApp_Project
+      .VBComponents.Remove .VBComponents(FACTORY_NAME)
+    End With
   On Error GoTo 0
 End Sub
 
@@ -202,18 +211,27 @@ Private Sub Run_SingleMethod(ByVal TheClass As Object, ByVal MethodName As Strin
   Dim lStop  As Long
   Dim lCount As Long
   
+  If MethodName = "Setup" Then Exit Sub
+  If MethodName = "Teardown" Then Exit Sub
+  
+  With ObjectInfo(TheClass)
+    If .HasFunction("Setup") Then Call .CallFunction("Setup", MethodName)
+  End With
+    
   lStart = timeGetTime
-  'For lCount = 1 To Me.Iterations
   Do While True
-    If (lCount > MINIMUM_ITERATIONS) Then
-      If ((timeGetTime - lStart) > c_Timeout) Then Exit Do
+    If (lCount >= MINIMUM_ITERATIONS) Then
+      If ((timeGetTime - lStart) >= c_Timeout) Then Exit Do
     End If
     lCount = lCount + 1
     Call TLI.InvokeHook(TheClass, MethodName, INVOKE_FUNC)
   Loop
-  'Next
   lStop = timeGetTime
   Call c_Results.Add(MethodName, lCount, lStop - lStart - c_BaseDuration)
+  
+  With ObjectInfo(TheClass)
+    If .HasFunction("Teardown") Then Call .CallFunction("Teardown", MethodName)
+  End With
   
 End Sub
 
