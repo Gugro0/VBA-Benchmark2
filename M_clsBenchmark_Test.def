@@ -119,6 +119,6 @@ Public Sub We_can_run_Test_by_Name()
   
   ' Assert
   Assert.That objBenchmark.TestCount, Iz.EqualTo(4)
-  Debug.Print objBenchmark.Report
+  Assert.That objBenchmark.Report, Text.Contains("The fastest Test")
 
 End Sub

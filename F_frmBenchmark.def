@@ -1,6 +1,6 @@
 Version =20
 VersionRequired =20
-Checksum =-1905079337
+Checksum =1911773884
 Begin Form
     PopUp = NotDefault
     Modal = NotDefault
@@ -22,7 +22,7 @@ Begin Form
     ItemSuffix =8
     Left =3225
     Top =2490
-    Right =15960
+    Right =21345
     Bottom =12465
     RecSrcDt = Begin
         0x8c0c0f20f712e440
@@ -360,9 +360,12 @@ End Sub
 
 Private Sub cmdRun_Click()
   If Nz(Me.ctlClasses) <> "" Then
+    Me.ctlResult = ""
+    DoCmd.Hourglass True
     With Benchmark.Run(Me.ctlClasses, Nz(Me.ctlTimeout))
       Me.ctlResult = .Report
     End With
+    DoCmd.Hourglass False
   End If
 End Sub
 

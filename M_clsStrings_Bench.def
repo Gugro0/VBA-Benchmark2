@@ -5,11 +5,26 @@ Attribute VB_Exposed = False
 Option Compare Database
 Option Explicit
 
-Public Sub String_WithWhile()
+Public Sub Setup(ByVal Method As String)
+  Debug.Print "Setup for " & Method
+End Sub
+
+Public Sub String_WithWhileLen()
   Dim str As String
   
   While Len(str) < 100
     str = str + "1"
+  Wend
+End Sub
+
+Public Sub String_WithWhile()
+  Dim str As String
+  Dim i   As Integer
+  
+  i = 1
+  While i <= 100
+    str = str + "1"
+    i = i + 1
   Wend
 End Sub
 
@@ -20,4 +35,8 @@ Public Sub String_WithFor()
   For i = 1 To 100
     str = str + "1"
   Next
+End Sub
+
+Public Sub TearDown(ByVal Method As String)
+  Debug.Print "Teardown for " & Method
 End Sub
