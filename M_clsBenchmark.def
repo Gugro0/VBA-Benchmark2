@@ -98,19 +98,8 @@ Public Property Get Title() As String
 End Property
 
 Public Function Report() As String
-  Dim str As String
-  Dim v As Variant
-  Dim res As clsBenchmark_Result
   
-  str = Me.Title & vbCrLf
-  For Each v In Me.Results.AllResults
-    Set res = v
-    str = str & res.Result & vbCrLf
-  Next
-  With Me.Results.Fastest
-    str = str & "The fastest Test was: " & .Name & " ( " & .Speed & " )"
-  End With
-  Report = str
+  Report = Me.Title & vbCrLf & Me.Results.Report
   
 End Function
 
