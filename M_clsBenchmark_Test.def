@@ -90,7 +90,7 @@ Public Sub we_have_a_TestResult()
   
   ' Assert
   With objBenchmark.Results.Test(1)
-    Assert.That .Result, Text.Matches("IntegerBenchmark .*[0-9]* msec .* ")
+    Assert.That .Result, Text.Matches("IntegerBenchmark .*[0-9]*\,[0-9]* msec/Iter .* ")
   End With
   
 End Sub

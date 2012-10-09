@@ -72,6 +72,27 @@ Public Property Get Slowest() As clsBenchmark_Result
 
 End Property
 
+Public Function Report() As String
+  Dim str As String
+  Dim v As Variant
+  Dim res As clsBenchmark_Result
+  
+  For Each v In AllResults
+    Set res = v
+    str = str & res.Result & vbCrLf
+  Next
+  With Fastest
+    str = str & "The fastest Test was: " & .Name & " ( " & .Speed & " )"
+    If .TimePerIteration < 0.1 Then
+      str = str & vbCrLf & "WARNING: Your test are running so fast, so due to the Benchmark overhead your results will not be accurate!"
+    End If
+  End With
+  
+  Report = str
+  
+End Function
+
+
 ' -------------------------------------------------------------------------
 
 Private Sub c_ParentGetter_QueryParent(ByRef Parent As Object)
