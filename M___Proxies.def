@@ -13,6 +13,17 @@ Public Function ObjectInfo(ByVal TheObject As Object) As clsObjectInfo
   ObjectInfo.Initialize TheObject
 End Function
 
+Public Function StopWatch(Optional ByVal strDescription As String, _
+                  Optional ByVal LogCategory As String = "StopWatch", _
+                  Optional ByVal LogModule As String = "", _
+                  Optional ByVal LogProcedure As String = "") As clsStopWatch
+                  
+  Set StopWatch = New clsStopWatch
+  StopWatch.Init strDescription, LogCategory, LogModule, LogProcedure
+  StopWatch.Start
+End Function
+
+
 'Public Function VBWatchdogStart()
 '  ErrEx.Enable "ErrProc"
 'End Function

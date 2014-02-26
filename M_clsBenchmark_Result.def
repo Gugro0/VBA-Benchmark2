@@ -17,9 +17,9 @@ Private c_Iterations  As Long
 Private c_Duration    As Long
 Private c_ParentGetter As clsParentGetter
 
-Public Sub Initialize(ByVal Name As String, ByVal Iterations As Long, ByVal Duration As Long, ByVal pg As clsParentGetter)
+Public Sub Initialize(ByVal Name As String, ByVal ITERATIONS As Long, ByVal Duration As Long, ByVal pg As clsParentGetter)
   c_Name = Name
-  c_Iterations = Iterations
+  c_Iterations = ITERATIONS
   Debug.Assert Duration > 0
   c_Duration = Duration
   Set c_ParentGetter = pg
@@ -31,14 +31,14 @@ End Property
 Public Property Get ID() As Long
   ID = ObjPtr(Me)
 End Property
-Public Property Get Iterations() As Long
-  Iterations = c_Iterations
+Public Property Get ITERATIONS() As Long
+  ITERATIONS = c_Iterations
 End Property
 Public Property Get IterationsPerSecond() As Long
-  IterationsPerSecond = Int(Me.Iterations * 1000 / Me.Duration)
+  IterationsPerSecond = Int(Me.ITERATIONS * 1000 / Me.Duration)
 End Property
 Public Property Get TimePerIteration() As Double  ' in msec
-  TimePerIteration = Me.Duration / Me.Iterations
+  TimePerIteration = Me.Duration / Me.ITERATIONS
 End Property
 Public Property Get Duration() As Long            ' in msec
   Duration = c_Duration
@@ -51,7 +51,7 @@ End Function
 Public Function Result() As String
   Dim str As String
   
-  str = FillBlank(Me.Name, 40) & Format(Me.TimePerIteration, "#,##0.0000") & " msec/Iter => " & Me.IterationsPerSecond & " Iter/sec => "
+  str = FillBlank(Me.Name, 35) & Format(Me.TimePerIteration, "#,##0.0000") & " msec/Iter => " & Me.IterationsPerSecond & " Iter/sec => "
   If Parent.Fastest.ID = Me.ID Then
     str = str & " Fastest !!"
   Else

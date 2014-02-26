@@ -14,6 +14,7 @@ Attribute VB_Exposed = False
 '               Benchmark.RunClasses("clsMyBenchmark clsOtherBench").Report
 ' Updates    : 30.07.12 Changed to Timeout Model
 '              02.10.12 Code cleanup + Setup/Teardown methods
+'              26.02.14 moved from timeGetTime to clsStopwatch for higher resolution
 '---------------------------------------------------------------------------------------
 
 Option Compare Database
@@ -29,7 +30,7 @@ Private c_Results       As clsBenchmark_Results
 Private c_Timeout       As Long
 Private c_BaseDuration  As Long
 
-Private Declare Function timeGetTime Lib "winmm.dll" () As Long ' in ms , Auflösung 1 ms
+' Private Declare Function timeGetTime Lib "winmm.dll" () As Long ' in ms , Auflösung 1 ms
 
 
 Private Sub Class_Initialize()
@@ -106,54 +107,36 @@ End Function
 ' ----------------------------------------------------------------------------------
 
 Private Function CreateFactory(ByVal Classname As String) As Boolean
-  Dim mdl As Module
+  'Dim mdl As Module
   Dim VBKomp As VBComponent
-  Dim strName As String
+  'Dim strName As String
   Dim str As String
-  Dim startLine As Long, startCol As Long
-  Dim EndLine As Long, EndCol As Long
+  'Dim startLine As Long, startCol As Long
+  'Dim EndLine As Long, EndCol As Long
   
   str = str & "Public Function " & FACTORY_PROC_NAME & " as " & Classname & vbCrLf
   str = str & "  Set " & FACTORY_PROC_NAME & " = New " & Classname & vbCrLf
   str = str & "End Function" & vbCrLf
   
-  On Error Resume Next
-    Set mdl = Access.Modules(Classname)
-    If Err = 9 Then
-      On Error GoTo 0
-      Err.Raise 9, , "Can not find Benchmark Class " & Classname
-      Exit Function
-    End If
-    
-    'Set mdl = Access.Modules(FACTORY_NAME)
-    DestroyFactory
-    'If Err = 9 Then
-      'On Error GoTo 0
-      With MainApp_Project
-        Set VBKomp = .VBComponents.Add(vbext_ct_StdModule)
-        VBKomp.Name = FACTORY_NAME
-        VBKomp.CodeModule.AddFromString str
-      End With
+  With MainApp_Project
+    On Error Resume Next
+      Set VBKomp = .VBComponents.Item(Classname)
+      ' Set mdl = Access.Modules(Classname)
+      If Err = 9 Then
+        On Error GoTo 0
+        Err.Raise 9, , "Can not find Benchmark Class " & Classname
+        Exit Function
+      End If
+    On Error GoTo 0
+  End With
+  
+  DestroyFactory
+  With MainApp_Project
+    Set VBKomp = .VBComponents.Add(vbext_ct_StdModule)
+    VBKomp.Name = FACTORY_NAME
+    VBKomp.CodeModule.AddFromString str
+  End With
       
-      ' Application.DoCmd.Save acModule, FACTORY_NAME
-'      DoCmd.RunCommand acCmdNewObjectModule
-'      Set mdl = Access.Modules(Access.Modules.Count - 1) '    Access.Modules(Application.CurrentObjectName)
-'      strName = mdl.Name
-'      'Insert a bogus line so that we can close the module; BIG BAD BUG ?!?
-'      mdl.InsertLines 3, "'Created on: " & Now()
-'      DoCmd.Close acModule, strName, acSaveYes
-'      DoCmd.SelectObject acModule, strName, True
-'      DoCmd.Rename FACTORY_NAME, acModule, strName
-'      DoCmd.OpenModule FACTORY_NAME
-'      Set mdl = Access.Modules(FACTORY_NAME)
-'    Else
-      'If mdl.Find("Public Function GetTestClass", startLine, startCol, EndLine, EndCol) Then
-      '  mdl.DeleteLines startLine, 99999 ' EndLine - startLine + 1 + 3
-      'End If
-'      mdl.DeleteLines 1, mdl.CountOfLines
-'      mdl.AddFromString str
-'    End If
-  'DoCmd.Close acModule, FACTORY_NAME, acSaveYes
   CreateFactory = True
 End Function
 
@@ -161,10 +144,9 @@ Private Function MainApp_Project() As VBProject
   Static proj As VBProject
   
   If proj Is Nothing Then
-  
-  For Each proj In Application.VBE.VBProjects
-    If proj.FileName = Application.CurrentProject.FullName Then Exit For
-  Next
+    For Each proj In Application.VBE.VBProjects
+      If proj.FileName = Application.CurrentProject.FullName Then Exit For
+    Next
   End If
   Set MainApp_Project = proj
     
@@ -178,26 +160,8 @@ Private Sub DestroyFactory()
   On Error GoTo 0
 End Sub
 
-'Private Sub Calibrate()
-'  c_BaseDuration = MeasureEmptyLoop
-'End Sub
-'
-'Private Function MeasureEmptyLoop() As Long
-'  Dim lStart As Long
-'  Dim lStop  As Long
-'  Dim lCount As Long
-'
-'  lStart = timeGetTime
-'  For lCount = 1 To Me.Iterations
-'    ' Do Nothing
-'  Next
-'  lStop = timeGetTime
-'  MeasureEmptyLoop = lStop - lStart
-'End Function
 
 Private Sub Run_SingleMethod(ByVal TheClass As Object, ByVal MethodName As String)
-  Dim lStart As Long
-  Dim lStop  As Long
   Dim lCount As Long
   
   If MethodName = "Setup" Then Exit Sub
@@ -207,16 +171,16 @@ Private Sub Run_SingleMethod(ByVal TheClass As Object, ByVal MethodName As Strin
     If .HasFunction("Setup") Then Call .CallFunction("Setup", MethodName)
   End With
     
-  lStart = timeGetTime
-  Do While True
-    If (lCount >= MINIMUM_ITERATIONS) Then
-      If ((timeGetTime - lStart) >= c_Timeout) Then Exit Do
-    End If
-    lCount = lCount + 1
-    Call TLI.InvokeHook(TheClass, MethodName, INVOKE_FUNC)
-  Loop
-  lStop = timeGetTime
-  Call c_Results.Add(MethodName, lCount, lStop - lStart - c_BaseDuration)
+  With StopWatch
+    Do While True
+      If (lCount >= MINIMUM_ITERATIONS) Then
+        If .Elapsedms >= c_Timeout Then Exit Do
+      End If
+      lCount = lCount + 1
+      Call TLI.InvokeHook(TheClass, MethodName, INVOKE_FUNC)
+    Loop
+    Call c_Results.Add(MethodName, lCount, .Elapsedms)
+  End With
   
   With ObjectInfo(TheClass)
     If .HasFunction("Teardown") Then Call .CallFunction("Teardown", MethodName)

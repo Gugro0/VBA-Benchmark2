@@ -1,0 +1,7 @@
+'
+' References need to compile this project:
+'  - Microsoft Visual Basic for Application Extensibility 5.3
+'
+' References need to test this project:
+' - AccUnit Access/VBA TestSuite
+' - SimplyVBUnit Framework v3.0
