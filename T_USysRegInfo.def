@@ -34,6 +34,7 @@
       <Required name="Required" type="1" value="False"/>
       <AllowZeroLength name="AllowZeroLength" type="1" value="False"/>
       <AppendOnly name="AppendOnly" type="1" value="False"/>
+      <Expression name="Expression" type="12" value=""/>
       <FieldSize name="FieldSize" type="4"/>
       <OriginalValue name="OriginalValue" type="10"/>
       <VisibleValue name="VisibleValue" type="10"/>
@@ -43,7 +44,6 @@
       <Description name="Description" type="10" value="Enthält den Namen des Registry-Subkeys"/>
       <DisplayControl name="DisplayControl" type="3" value="109"/>
       <UnicodeCompression name="UnicodeCompression" type="1" value="True"/>
-      <GUID name="GUID" type="9" value="????????"/>
       <IMEMode name="IMEMode" type="2" value="0"/>
       <IMESentenceMode name="IMESentenceMode" type="2" value="3"/>
       <TextAlign name="TextAlign" type="2" value="0"/>
@@ -52,7 +52,7 @@
     <Field_1 name="Type">
       <Value name="Value" type="4"/>
       <Attributes name="Attributes" type="4" value="1"/>
-      <CollatingOrder name="CollatingOrder" type="3" value="1033"/>
+      <CollatingOrder name="CollatingOrder" type="3" value="1024"/>
       <Type name="Type" type="3" value="4"/>
       <Name name="Name" type="12" value="Type"/>
       <OrdinalPosition name="OrdinalPosition" type="3" value="1"/>
@@ -68,6 +68,7 @@
       <Required name="Required" type="1" value="False"/>
       <AllowZeroLength name="AllowZeroLength" type="1" value="False"/>
       <AppendOnly name="AppendOnly" type="1" value="False"/>
+      <Expression name="Expression" type="12" value=""/>
       <FieldSize name="FieldSize" type="4"/>
       <OriginalValue name="OriginalValue" type="4"/>
       <VisibleValue name="VisibleValue" type="4"/>
@@ -77,7 +78,6 @@
       <Description name="Description" type="10" value="Definiert den Typ des zu erstellenden Eintrags: Key (0), String (1), DWORD (4)"/>
       <DecimalPlaces name="DecimalPlaces" type="2" value="255"/>
       <DisplayControl name="DisplayControl" type="3" value="109"/>
-      <GUID name="GUID" type="9" value="????????"/>
       <TextAlign name="TextAlign" type="2" value="0"/>
       <AggregateType name="AggregateType" type="4" value="-1"/>
     </Field_1>
@@ -100,6 +100,7 @@
       <Required name="Required" type="1" value="False"/>
       <AllowZeroLength name="AllowZeroLength" type="1" value="False"/>
       <AppendOnly name="AppendOnly" type="1" value="False"/>
+      <Expression name="Expression" type="12" value=""/>
       <FieldSize name="FieldSize" type="4"/>
       <OriginalValue name="OriginalValue" type="10"/>
       <VisibleValue name="VisibleValue" type="10"/>
@@ -109,7 +110,6 @@
       <Description name="Description" type="10" value="Für Registry-Einträge: definiert den Namen des Wertes"/>
       <DisplayControl name="DisplayControl" type="3" value="109"/>
       <UnicodeCompression name="UnicodeCompression" type="1" value="True"/>
-      <GUID name="GUID" type="9" value="????????"/>
       <IMEMode name="IMEMode" type="2" value="0"/>
       <IMESentenceMode name="IMESentenceMode" type="2" value="3"/>
       <TextAlign name="TextAlign" type="2" value="0"/>
@@ -134,6 +134,7 @@
       <Required name="Required" type="1" value="False"/>
       <AllowZeroLength name="AllowZeroLength" type="1" value="False"/>
       <AppendOnly name="AppendOnly" type="1" value="False"/>
+      <Expression name="Expression" type="12" value=""/>
       <FieldSize name="FieldSize" type="4"/>
       <OriginalValue name="OriginalValue" type="10"/>
       <VisibleValue name="VisibleValue" type="10"/>
@@ -143,7 +144,6 @@
       <Description name="Description" type="10" value="Für Registry-Einträge: Der aktuelle Wert als Text"/>
       <DisplayControl name="DisplayControl" type="3" value="109"/>
       <UnicodeCompression name="UnicodeCompression" type="1" value="True"/>
-      <GUID name="GUID" type="9" value="????????"/>
       <IMEMode name="IMEMode" type="2" value="0"/>
       <IMESentenceMode name="IMESentenceMode" type="2" value="3"/>
       <TextAlign name="TextAlign" type="2" value="0"/>

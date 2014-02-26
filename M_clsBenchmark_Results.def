@@ -21,11 +21,11 @@ Private Sub Class_Initialize()
   Set c_ParentGetter = New clsParentGetter
 End Sub
 
-Public Sub Add(ByVal Testname As String, ByVal Iterations As Long, ByVal Duration As Long)
+Public Sub Add(ByVal Testname As String, ByVal ITERATIONS As Long, ByVal Duration As Long)
   Dim Result As clsBenchmark_Result
   
   Set Result = New clsBenchmark_Result
-  Call Result.Initialize(Testname, Iterations, Duration, c_ParentGetter)
+  Call Result.Initialize(Testname, ITERATIONS, Duration, c_ParentGetter)
   c_Results.Add Result
 End Sub
 

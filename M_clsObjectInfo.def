@@ -54,7 +54,7 @@ End Function
 Public Property Get Property(ByVal PropertyName As String) As Variant
   Dim objItem As TLI.SearchItem
   
-   On Error GoTo Property_Error
+  On Error GoTo Property_Error
 
   Set objItem = GetItem(PropertyName)
   If objItem Is Nothing Then Exit Function
@@ -99,13 +99,16 @@ Public Function CallFunction(ByVal FunctionName As String, ParamArray Params()) 
   vTmpParams = Params
   Do
     If UBound(vTmpParams) = -1 Then
+      ' no Params at all
       CallFunction = TLI.InvokeHook(TheObject, FunctionName, INVOKE_FUNC)
       Exit Do
     ElseIf IsArray(vTmpParams(0)) Then
+      ' Params(0) is an Array of Params, so recurse again
       vTmpParams2 = vTmpParams(0)
       vTmpParams = vTmpParams2
     Else
       numArgs = UBound(vTmpParams)
+      ' InvokeHookArray needs the params in REVERSE order !!
       ReDim vParams(numArgs)
       For i = 0 To numArgs
         If IsObject(vTmpParams(numArgs - i)) Then

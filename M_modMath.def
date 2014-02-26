@@ -1,6 +1,6 @@
 Option Compare Database
 Option Explicit
 
-Public Function Log10(X) As Double
-  Log10 = Log(X) / Log(10#)
+Public Function Log10(x) As Double
+  Log10 = Log(x) / Log(10#)
 End Function

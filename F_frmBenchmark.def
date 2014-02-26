@@ -1,6 +1,6 @@
 Version =20
 VersionRequired =20
-Checksum =1911773884
+Checksum =-118267522
 Begin Form
     PopUp = NotDefault
     Modal = NotDefault
@@ -17,21 +17,22 @@ Begin Form
     PictureAlignment =2
     DatasheetGridlinesBehavior =3
     GridY =10
-    Width =8957
+    Width =9524
     DatasheetFontHeight =11
     ItemSuffix =8
     Left =3225
-    Top =2490
-    Right =21345
-    Bottom =12465
+    Top =2415
+    Right =12750
+    Bottom =8130
+    DatasheetGridlinesColor =15062992
     RecSrcDt = Begin
         0x8c0c0f20f712e440
     End
     GUID = Begin
-        0x9f42ca6d1054ab4398886e0f35fbdd9e
+        0xcc1df3f53204074b97ef6abba72119e2
     End
     NameMap = Begin
-        0x0acc0e5500000000000000000000000000000000000000000c00000004000000 ,
+        0x0acc0e5500000000000000000000000000000000000000000c00000005000000 ,
         0x0000000000000000000000000000
     End
     OnOpen ="[Event Procedure]"
@@ -41,10 +42,10 @@ Begin Form
         0x010000006801000000000000a10700000100000001000000
     End
     PrtDevMode = Begin
-        0x0000000000000000000000000000000000000000000000000000000000000000 ,
+        0x00000000c8dc290378463200c4dc2903704432002387ea2fe0dc29032a87ea2f ,
         0x010400069c00f40243ef8005010009009a0b3408640001000f00c80001000100 ,
-        0xc800020001004134000000000000000000000000000000000000000000000000 ,
-        0x0000000000000000000000000000000000000000010000000000000001000000 ,
+        0xc80002000100413400dc290374463200704632009c4432007625812f40dd2903 ,
+        0x08d82903c4dc0000000000000000000000000000010000000000000001000000 ,
         0x0200000001000000ffffffff0000000000000000000000000000000044494e55 ,
         0x2200b800f402000076c9bcad0000000000000000000000000000000000000000 ,
         0x0000000000000000060000000100000000000000000001000000000000000000 ,
@@ -73,36 +74,63 @@ Begin Form
     End
     PrtDevNames = Begin
         0x0800160024000100000000000000000000000000000000000000000000000000 ,
-        0x00000000466178576172652053657276696365204c6179657200
+        0x00000000466178576172652053657276696365204c6179657200000000000000 ,
+        0x0000
     End
     AllowPivotTableView =0
     AllowPivotChartView =0
     AllowPivotChartView =0
     FilterOnLoad =0
-    DatasheetBackColor12 =16777215
     ShowPageMargins =0
     DisplayOnSharePointSite =1
     AllowLayoutView =0
     DatasheetAlternateBackColor =16053492
     DatasheetGridlinesColor12 =15062992
     FitToScreen =1
+    PrtDevModeW = Begin
+        0x00000000509733003d03003ec400f10301000000b348e92f0a0000000c000000 ,
+        0x0016f1030016f103fb15f10300000000b09733000000f1037a7ddb01f4963300 ,
+        0x01040006dc00f40243ef8005010009009a0b3408640001000f00c80001000100 ,
+        0xc80002000100410034000000000000009005f1030100000078913e0004000000 ,
+        0x2c98330090645d38040000009005f71f240000000000000000993300a9e4db2f ,
+        0x01000000c8c20000000000000000000000000000010000000000000001000000 ,
+        0x0200000001000000ffffffff0000000000000000000000000000000044494e55 ,
+        0x2200b800f402000076c9bcad0000000000000000000000000000000000000000 ,
+        0x0000000000000000060000000100000000000000000001000000000000000000 ,
+        0x0000000000000000000000000000000000000000000000000000000000000000 ,
+        0x0000000000000000000000000000000000000000000000000000000000000000 ,
+        0x0000000000000000000000000000000000000000000000000000000000000000 ,
+        0x0000000000000000000000000000000000000000000000000000000000000000 ,
+        0x0000000000000000000000000000000000000000000000000000000000000000 ,
+        0x0000000000000000000000000000000000000000000000000000000000000000 ,
+        0x0000000000000000000000000000000000000000000000000000000000000000 ,
+        0x0000000000000000000000000000000000000000000000000000000000000000 ,
+        0x0000000000000000000000000000000000000000000000000000000000000000 ,
+        0x0000000000000000000000000000000000000000000000000000000000000000 ,
+        0x0000000000000000000000000000000000000000000000000000000000000000 ,
+        0x0000000000000000000000000000000000000000000000000000000000000000 ,
+        0x0000000000000000000000000000000000000000000000000000000000000000 ,
+        0x0000000000000000000000000000000000000000000000000000000000000000 ,
+        0x0000000000000000000000000000000000000000000000000000000000000000 ,
+        0x000000000000000000000000010000000000000000000000b8000000534d544a ,
+        0x000000001000a80054006f006200690074002000460061007800570061007200 ,
+        0x65000000496e70757442696e004155544f00524553444c4c00556e6972657344 ,
+        0x4c4c004f7269656e746174696f6e00504f525452414954005265736f6c757469 ,
+        0x6f6e004f7074696f6e3100506170657253697a65004f7074696f6e310048616c ,
+        0x66746f6e650048545f50415453495a455f535550455243454c4c5f4d00000000 ,
+        0x00000000000000000000000000000000
+    End
+    PrtDevNamesW = Begin
+        0x0400120020000100000000000000000000000000000000000000000000000000 ,
+        0x0000000000000000000000000000000000000000000000000000000000000000 ,
+        0x4600610078005700610072006500200053006500720076006900630065002000 ,
+        0x4c006100790065007200000000000000000000000000000000000000
+    End
     Begin
         Begin Label
             BackStyle =0
             FontSize =11
             FontName ="Calibri"
-            LeftPadding =30
-            TopPadding =30
-            RightPadding =30
-            BottomPadding =30
-            GridlineStyleLeft =0
-            GridlineStyleTop =0
-            GridlineStyleRight =0
-            GridlineStyleBottom =0
-            GridlineWidthLeft =1
-            GridlineWidthTop =1
-            GridlineWidthRight =1
-            GridlineWidthBottom =1
         End
         Begin CommandButton
             Width =1701
@@ -111,74 +139,41 @@ Begin Form
             FontWeight =400
             ForeColor =-2147483630
             FontName ="Calibri"
-            LeftPadding =30
-            TopPadding =30
-            RightPadding =30
-            BottomPadding =30
-            GridlineStyleLeft =0
-            GridlineStyleTop =0
-            GridlineStyleRight =0
-            GridlineStyleBottom =0
-            GridlineWidthLeft =1
-            GridlineWidthTop =1
-            GridlineWidthRight =1
-            GridlineWidthBottom =1
+            BorderLineStyle =0
         End
         Begin TextBox
             FELineBreak = NotDefault
+            BorderLineStyle =0
             Width =1701
             LabelX =-1701
             FontSize =11
             BorderColor =12632256
             FontName ="Calibri"
             AsianLineBreak =1
-            LeftPadding =30
-            TopPadding =30
-            RightPadding =30
-            BottomPadding =30
-            GridlineStyleLeft =0
-            GridlineStyleTop =0
-            GridlineStyleRight =0
-            GridlineStyleBottom =0
-            GridlineWidthLeft =1
-            GridlineWidthTop =1
-            GridlineWidthRight =1
-            GridlineWidthBottom =1
-            ShowDatePicker =1
         End
         Begin ComboBox
+            BorderLineStyle =0
             Width =1701
             LabelX =-1701
             FontSize =11
             BorderColor =12632256
             FontName ="Calibri"
-            LeftPadding =30
-            TopPadding =30
-            RightPadding =30
-            BottomPadding =30
-            GridlineStyleLeft =0
-            GridlineStyleTop =0
-            GridlineStyleRight =0
-            GridlineStyleBottom =0
-            GridlineWidthLeft =1
-            GridlineWidthTop =1
-            GridlineWidthRight =1
-            GridlineWidthBottom =1
             AllowValueListEdits =1
             InheritValueList =1
         End
         Begin FormHeader
-            Height =793
+            Height =1133
+            BackColor =15523798
             Name ="Formularkopf"
             GUID = Begin
-                0xd497aa8559336c4ea51e9ae971b1c7dd
+                0xc8715bedfdff464e99b4cd9119f74b89
             End
             Begin
                 Begin Label
                     OverlapFlags =85
                     TextFontCharSet =238
                     Left =170
-                    Top =226
+                    Top =453
                     Width =1980
                     Height =390
                     FontSize =14
@@ -186,151 +181,158 @@ Begin Form
                     Name ="Bezeichnungsfeld0"
                     Caption ="VBA Benchmark"
                     GUID = Begin
-                        0x492cc9e76f980240adffa4386be125bf
+                        0x37bfd62cf3001649b486dca0004f3553
                     End
                     LayoutCachedLeft =170
-                    LayoutCachedTop =226
+                    LayoutCachedTop =453
                     LayoutCachedWidth =2150
-                    LayoutCachedHeight =616
+                    LayoutCachedHeight =843
                 End
-            End
-        End
-        Begin Section
-            Height =5946
-            Name ="Detailbereich"
-            GUID = Begin
-                0x12a90b04a14d0143bccbb91e68e188b4
-            End
-            Begin
                 Begin ComboBox
                     RowSourceTypeInt =1
                     OverlapFlags =85
                     IMESentenceMode =3
-                    Left =283
-                    Top =517
+                    Left =2324
+                    Top =630
                     Width =3006
                     Height =315
                     GUID = Begin
-                        0x8f7540409420b34eaba2ac1c29a7b446
+                        0x71a29cc2b2b61644b9e2733d1b63a13c
                     End
                     Name ="ctlClasses"
                     RowSourceType ="Value List"
 
-                    LayoutCachedLeft =283
-                    LayoutCachedTop =517
-                    LayoutCachedWidth =3289
-                    LayoutCachedHeight =832
+                    LayoutCachedLeft =2324
+                    LayoutCachedTop =630
+                    LayoutCachedWidth =5330
+                    LayoutCachedHeight =945
                     Begin
                         Begin Label
                             OverlapFlags =85
-                            Left =287
-                            Top =170
+                            Left =2328
+                            Top =283
                             Width =3000
                             Height =315
                             Name ="Bezeichnungsfeld2"
                             Caption ="Choose your Benchmark Class:"
                             GUID = Begin
-                                0xedcdde6f9dc62448bc3d0aa13ae6091b
+                                0x962e95f4c6536643a295cb98c659d050
                             End
-                            LayoutCachedLeft =287
-                            LayoutCachedTop =170
-                            LayoutCachedWidth =3287
-                            LayoutCachedHeight =485
+                            LayoutCachedLeft =2328
+                            LayoutCachedTop =283
+                            LayoutCachedWidth =5328
+                            LayoutCachedHeight =598
+                        End
+                    End
+                End
+                Begin TextBox
+                    DecimalPlaces =0
+                    OverlapFlags =85
+                    TextAlign =3
+                    IMESentenceMode =3
+                    Left =5669
+                    Top =623
+                    Width =1371
+                    Height =315
+                    TabIndex =1
+                    Name ="ctlTimeout"
+                    Format ="Standard"
+                    GUID = Begin
+                        0x124d04c7e3676b4db2a756765f3e44e4
+                    End
+
+                    LayoutCachedLeft =5669
+                    LayoutCachedTop =623
+                    LayoutCachedWidth =7040
+                    LayoutCachedHeight =938
+                    Begin
+                        Begin Label
+                            OverlapFlags =85
+                            Left =5670
+                            Top =285
+                            Width =1380
+                            Height =315
+                            Name ="Bezeichnungsfeld7"
+                            Caption ="Timeout [ms]:"
+                            GUID = Begin
+                                0xe1915f5c5965f6439cf9becfb5da9a36
+                            End
+                            LayoutCachedLeft =5670
+                            LayoutCachedTop =285
+                            LayoutCachedWidth =7050
+                            LayoutCachedHeight =600
                         End
                     End
                 End
                 Begin CommandButton
                     OverlapFlags =85
-                    Left =6519
+                    Left =7313
                     Top =226
-                    Width =2271
+                    Width =2106
                     Height =688
                     TabIndex =2
                     Name ="cmdRun"
                     Caption ="Run Bechmark..."
                     OnClick ="[Event Procedure]"
                     GUID = Begin
-                        0x8d77a7c2fe58804ab36a081135202817
+                        0x8fdd70c39ba69642928372d4174316b8
                     End
 
-                    LayoutCachedLeft =6519
+                    LayoutCachedLeft =7313
                     LayoutCachedTop =226
-                    LayoutCachedWidth =8790
+                    LayoutCachedWidth =9419
                     LayoutCachedHeight =914
+                    WebImagePaddingLeft =2
+                    WebImagePaddingTop =2
+                    WebImagePaddingRight =1
+                    WebImagePaddingBottom =1
                 End
+            End
+        End
+        Begin Section
+            Height =4592
+            Name ="Detailbereich"
+            GUID = Begin
+                0xc204de2b6fdd9341bb925ba2d070ff04
+            End
+            Begin
                 Begin TextBox
                     OverlapFlags =85
+                    TextFontFamily =49
                     IMESentenceMode =3
-                    Left =113
-                    Top =1866
-                    Width =8781
+                    Left =170
+                    Top =392
+                    Width =9246
                     Height =4080
-                    TabIndex =3
+                    FontSize =9
                     Name ="ctlResult"
+                    FontName ="Consolas"
                     GUID = Begin
-                        0x829c8bdf62ec56479154e1bd62040086
+                        0xbf010c5e370c8c44b45bc0498aceec78
                     End
                     HorizontalAnchor =2
                     VerticalAnchor =2
 
-                    LayoutCachedLeft =113
-                    LayoutCachedTop =1866
-                    LayoutCachedWidth =8894
-                    LayoutCachedHeight =5946
+                    LayoutCachedLeft =170
+                    LayoutCachedTop =392
+                    LayoutCachedWidth =9416
+                    LayoutCachedHeight =4472
                     Begin
                         Begin Label
                             OverlapFlags =85
-                            Left =120
-                            Top =1474
-                            Width =720
+                            Left =180
+                            Width =810
                             Height =315
                             Name ="Bezeichnungsfeld5"
-                            Caption ="Result:"
+                            Caption ="Results:"
                             GUID = Begin
-                                0x6f878f847554464bac17037a92d9e5df
+                                0xeb71d78670d5f0428c3d10edc7f83d7d
                             End
                             HorizontalAnchor =1
                             VerticalAnchor =1
-                            LayoutCachedLeft =120
-                            LayoutCachedTop =1474
-                            LayoutCachedWidth =840
-                            LayoutCachedHeight =1789
-                        End
-                    End
-                End
-                Begin TextBox
-                    OverlapFlags =85
-                    IMESentenceMode =3
-                    Left =1530
-                    Top =850
-                    Width =1761
-                    Height =315
-                    TabIndex =1
-                    Name ="ctlTimeout"
-                    GUID = Begin
-                        0x426e073b1e96114490e49f574c714886
-                    End
-
-                    LayoutCachedLeft =1530
-                    LayoutCachedTop =850
-                    LayoutCachedWidth =3291
-                    LayoutCachedHeight =1165
-                    Begin
-                        Begin Label
-                            OverlapFlags =85
-                            Left =283
-                            Top =850
-                            Width =1035
-                            Height =315
-                            Name ="Bezeichnungsfeld7"
-                            Caption ="Timeout:"
-                            GUID = Begin
-                                0x0fcdf7690f37324eb7a91e2bb129d78d
-                            End
-                            LayoutCachedLeft =283
-                            LayoutCachedTop =850
-                            LayoutCachedWidth =1318
-                            LayoutCachedHeight =1165
+                            LayoutCachedLeft =180
+                            LayoutCachedWidth =990
+                            LayoutCachedHeight =315
                         End
                     End
                 End
@@ -340,7 +342,7 @@ Begin Form
             Height =0
             Name ="Formularfuﬂ"
             GUID = Begin
-                0x5aabc1491b11bc419d276814116d69f1
+                0xf290a3fb66b76c43b3459ae59c8c778e
             End
         End
     End
@@ -355,7 +357,10 @@ Option Explicit
 
 
 Private Sub Form_Open(Cancel As Integer)
+  Dim objBench As New clsBenchmark
+  
   Me.ctlClasses.RowSource = GetBenchmarkClasses
+  Me.ctlTimeout.Value = objBench.Timeout
 End Sub
 
 Private Sub cmdRun_Click()
@@ -366,6 +371,7 @@ Private Sub cmdRun_Click()
       Me.ctlResult = .Report
     End With
     DoCmd.Hourglass False
+    Me.SetFocus
   End If
 End Sub
 
