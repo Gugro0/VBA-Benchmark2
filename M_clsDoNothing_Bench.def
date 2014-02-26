@@ -1,0 +1,50 @@
+Attribute VB_GlobalNameSpace = False
+Attribute VB_Creatable = False
+Attribute VB_PredeclaredId = False
+Attribute VB_Exposed = False
+Option Compare Database
+Option Explicit
+
+' TLI has an overhead of about 0.0002 msec for finding the next Sub in a Class
+' -> remember this overhead if your Sub's are very short !!
+
+Public Sub DoNothing1()
+End Sub
+Public Sub DoNothing2()
+End Sub
+Public Sub DoNothing3()
+End Sub
+Public Sub DoNothing4()
+End Sub
+Public Sub DoNothing5()
+End Sub
+Public Sub DoNothing6()
+End Sub
+Public Sub DoNothing7()
+End Sub
+Public Sub DoNothing8()
+End Sub
+Public Sub DoNothing9()
+End Sub
+Public Sub DoNothing10()
+End Sub
+Public Sub DoNothing11()
+End Sub
+Public Sub DoNothing12()
+End Sub
+Public Sub DoNothing13()
+End Sub
+Public Sub DoNothing14()
+End Sub
+Public Sub DoNothing15()
+End Sub
+Public Sub DoNothing16()
+End Sub
+Public Sub DoNothing17()
+End Sub
+Public Sub DoNothing18()
+End Sub
+Public Sub DoNothing19()
+End Sub
+Public Sub DoNothing20()
+End Sub
