@@ -5,36 +5,44 @@ Attribute VB_Exposed = False
 Option Compare Database
 Option Explicit
 
-Private Const ITERATIONS As Integer = 1000
+Private Const ITERATIONS As Long = 20000
 
 Public Sub IntegerBenchmark()
   Dim i As Integer
+  Dim max As Integer
   
-  While i < ITERATIONS
+  max = ITERATIONS
+  While i < max
     i = i + 1
   Wend
 End Sub
 
 Public Sub LongBenchmark()
   Dim i As Long
+  Dim max As Long
   
-  While i < ITERATIONS
+  max = ITERATIONS
+  While i < max
     i = i + 1
   Wend
 End Sub
 
 Public Sub DoubleBenchmark()
   Dim i As Double
+  Dim max As Double
   
-  While i < ITERATIONS
+  max = ITERATIONS
+  While i < max
     i = i + 1#
   Wend
 End Sub
 
 Public Sub CurrencyBenchmark()
   Dim i As Currency
+  Dim max As Currency
   
-  While i < ITERATIONS
+  max = ITERATIONS
+  While i < max
     i = i + 1
   Wend
 End Sub
