@@ -5,3 +5,7 @@ Option Private Module
 Public Function AccUnitTestClassFactory_clsBenchmark_Test() As Object
    Set AccUnitTestClassFactory_clsBenchmark_Test = New clsBenchmark_Test
 End Function
+
+Public Function AccUnitTestClassFactory_clsStopWatch_Test() As Object
+   Set AccUnitTestClassFactory_clsStopWatch_Test = New clsStopWatch_Test
+End Function
