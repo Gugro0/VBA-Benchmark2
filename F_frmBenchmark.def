@@ -1,6 +1,6 @@
 Version =20
 VersionRequired =20
-Checksum =-446988643
+Checksum =-1624063387
 Begin Form
     PopUp = NotDefault
     Modal = NotDefault
@@ -19,7 +19,7 @@ Begin Form
     GridY =10
     Width =9751
     DatasheetFontHeight =11
-    ItemSuffix =8
+    ItemSuffix =11
     Left =3225
     Top =2415
     Right =22770
@@ -42,10 +42,10 @@ Begin Form
         0x010000006801000000000000a10700000100000001000000
     End
     PrtDevMode = Begin
-        0x00000000c85c9a0948613600c45c9a09405f36002387fd2fe05c9a092a87fd2f ,
+        0x005c4e05344a2e0023875630e05c4e052a87563050459f33c85c4e05384c2e00 ,
         0x010400069c00f40243ef8005010009009a0b3408640001000f00c80001000100 ,
-        0xc800020001004134005c9a0944613600406136006c5f36007625942f405d9a09 ,
-        0x08589a09c45c0000000000000000000000000000010000000000000001000000 ,
+        0xc800020001004134004a2e007625ed2f405d4e0508584e05c45c4e0500584e05 ,
+        0x084c2e00b3480000000000000000000000000000010000000000000001000000 ,
         0x0200000001000000ffffffff0000000000000000000000000000000044494e55 ,
         0x2200b800f402000076c9bcad0000000000000000000000000000000000000000 ,
         0x0000000000000000060000000100000000000000000001000000000000000000 ,
@@ -75,7 +75,7 @@ Begin Form
     PrtDevNames = Begin
         0x0800160024000100000000000000000000000000000000000000000000000000 ,
         0x00000000466178576172652053657276696365204c6179657200000000000000 ,
-        0x000000000000
+        0x00000000000000000000
     End
     AllowPivotTableView =0
     AllowPivotChartView =0
@@ -88,12 +88,12 @@ Begin Form
     DatasheetGridlinesColor12 =15062992
     FitToScreen =1
     PrtDevModeW = Begin
-        0x00000000c09737003d03003ec4002e0a01000000b348fc2f0a0000000c000000 ,
-        0x00162e0a00162e0afb152e0a000000002098370000002e0a7a7dee0164973700 ,
+        0x00000000009a2f003d03003ec400d40501000000b34855300a0000000c000000 ,
+        0x0016d4050016d405fb15d40500000000609a2f000000d4057a7d4701a4992f00 ,
         0x01040006dc00f40243ef8005010009009a0b3408640001000f00c80001000100 ,
-        0xc800020001004100340000000000000090052e0a01000000a8937e0004000000 ,
-        0x9c98370090645d380400000090051c18240000000000000070993700a9e4ee2f ,
-        0x0100000038c30000000000000000000000000000010000000000000001000000 ,
+        0xc80002000100410034000000000000009005d405010000007894740004000000 ,
+        0xdc9a2f0090649b67040000009005540e2400000000000000b09b2f00a9e44730 ,
+        0x0100000078c50000000000000000000000000000010000000000000001000000 ,
         0x0200000001000000ffffffff0000000000000000000000000000000044494e55 ,
         0x2200b800f402000076c9bcad0000000000000000000000000000000000000000 ,
         0x0000000000000000060000000100000000000000000001000000000000000000 ,
@@ -125,7 +125,7 @@ Begin Form
         0x0000000000000000000000000000000000000000000000000000000000000000 ,
         0x4600610078005700610072006500200053006500720076006900630065002000 ,
         0x4c00610079006500720000000000000000000000000000000000000000000000 ,
-        0x00000000
+        0x000000000000000000000000
     End
     Begin
         Begin Label
@@ -163,7 +163,7 @@ Begin Form
             InheritValueList =1
         End
         Begin FormHeader
-            Height =1133
+            Height =1360
             BackColor =15523798
             Name ="Formularkopf"
             GUID = Begin
@@ -173,8 +173,8 @@ Begin Form
                 Begin Label
                     OverlapFlags =85
                     TextFontCharSet =238
-                    Left =170
-                    Top =453
+                    Left =113
+                    Top =113
                     Width =1980
                     Height =390
                     FontSize =14
@@ -184,34 +184,35 @@ Begin Form
                     GUID = Begin
                         0x37bfd62cf3001649b486dca0004f3553
                     End
-                    LayoutCachedLeft =170
-                    LayoutCachedTop =453
-                    LayoutCachedWidth =2150
-                    LayoutCachedHeight =843
+                    LayoutCachedLeft =113
+                    LayoutCachedTop =113
+                    LayoutCachedWidth =2093
+                    LayoutCachedHeight =503
                 End
                 Begin ComboBox
                     RowSourceTypeInt =1
-                    OverlapFlags =85
+                    OverlapFlags =87
                     IMESentenceMode =3
-                    Left =2324
-                    Top =630
+                    Left =113
+                    Top =970
                     Width =3006
                     Height =315
+                    TabIndex =1
                     GUID = Begin
                         0x71a29cc2b2b61644b9e2733d1b63a13c
                     End
                     Name ="ctlClasses"
                     RowSourceType ="Value List"
 
-                    LayoutCachedLeft =2324
-                    LayoutCachedTop =630
-                    LayoutCachedWidth =5330
-                    LayoutCachedHeight =945
+                    LayoutCachedLeft =113
+                    LayoutCachedTop =970
+                    LayoutCachedWidth =3119
+                    LayoutCachedHeight =1285
                     Begin
                         Begin Label
-                            OverlapFlags =85
-                            Left =2328
-                            Top =283
+                            OverlapFlags =93
+                            Left =117
+                            Top =655
                             Width =3000
                             Height =315
                             Name ="Bezeichnungsfeld2"
@@ -219,59 +220,58 @@ Begin Form
                             GUID = Begin
                                 0x962e95f4c6536643a295cb98c659d050
                             End
-                            LayoutCachedLeft =2328
-                            LayoutCachedTop =283
-                            LayoutCachedWidth =5328
-                            LayoutCachedHeight =598
+                            LayoutCachedLeft =117
+                            LayoutCachedTop =655
+                            LayoutCachedWidth =3117
+                            LayoutCachedHeight =970
                         End
                     End
                 End
                 Begin TextBox
                     DecimalPlaces =0
-                    OverlapFlags =85
+                    OverlapFlags =87
                     TextAlign =3
                     IMESentenceMode =3
-                    Left =5669
-                    Top =623
-                    Width =1371
+                    Left =5045
+                    Top =970
+                    Width =1821
                     Height =315
-                    TabIndex =1
+                    TabIndex =3
                     Name ="ctlTimeout"
                     Format ="Standard"
                     GUID = Begin
                         0x124d04c7e3676b4db2a756765f3e44e4
                     End
 
-                    LayoutCachedLeft =5669
-                    LayoutCachedTop =623
-                    LayoutCachedWidth =7040
-                    LayoutCachedHeight =938
+                    LayoutCachedLeft =5045
+                    LayoutCachedTop =970
+                    LayoutCachedWidth =6866
+                    LayoutCachedHeight =1285
                     Begin
                         Begin Label
-                            OverlapFlags =85
-                            Left =5670
-                            Top =285
-                            Width =1380
+                            OverlapFlags =93
+                            Left =5053
+                            Top =655
+                            Width =1830
                             Height =315
                             Name ="Bezeichnungsfeld7"
-                            Caption ="Timeout [ms]:"
+                            Caption ="Max Runtime [ms]:"
                             GUID = Begin
                                 0xe1915f5c5965f6439cf9becfb5da9a36
                             End
-                            LayoutCachedLeft =5670
-                            LayoutCachedTop =285
-                            LayoutCachedWidth =7050
-                            LayoutCachedHeight =600
+                            LayoutCachedLeft =5053
+                            LayoutCachedTop =655
+                            LayoutCachedWidth =6883
+                            LayoutCachedHeight =970
                         End
                     End
                 End
                 Begin CommandButton
                     OverlapFlags =85
                     Left =7313
-                    Top =226
+                    Top =597
                     Width =2346
                     Height =688
-                    TabIndex =2
                     Name ="cmdRun"
                     Caption ="Run Bechmark..."
                     OnClick ="[Event Procedure]"
@@ -280,9 +280,70 @@ Begin Form
                     End
 
                     LayoutCachedLeft =7313
-                    LayoutCachedTop =226
+                    LayoutCachedTop =597
                     LayoutCachedWidth =9659
-                    LayoutCachedHeight =914
+                    LayoutCachedHeight =1285
+                    WebImagePaddingLeft =2
+                    WebImagePaddingTop =2
+                    WebImagePaddingRight =1
+                    WebImagePaddingBottom =1
+                End
+                Begin TextBox
+                    DecimalPlaces =0
+                    OverlapFlags =87
+                    TextAlign =3
+                    IMESentenceMode =3
+                    Left =3458
+                    Top =970
+                    Width =1371
+                    Height =315
+                    TabIndex =2
+                    Name ="ctlIterations"
+                    Format ="Standard"
+                    GUID = Begin
+                        0xff1d35b294799e4fbe5254ebd680d6bd
+                    End
+
+                    LayoutCachedLeft =3458
+                    LayoutCachedTop =970
+                    LayoutCachedWidth =4829
+                    LayoutCachedHeight =1285
+                    Begin
+                        Begin Label
+                            OverlapFlags =93
+                            Left =3459
+                            Top =655
+                            Width =1380
+                            Height =315
+                            Name ="Bezeichnungsfeld9"
+                            Caption ="Min Iterations"
+                            GUID = Begin
+                                0x1dfb95e16a9f114ba5cfd795bc618576
+                            End
+                            LayoutCachedLeft =3459
+                            LayoutCachedTop =655
+                            LayoutCachedWidth =4839
+                            LayoutCachedHeight =970
+                        End
+                    End
+                End
+                Begin CommandButton
+                    OverlapFlags =85
+                    Left =9127
+                    Top =56
+                    Width =510
+                    Height =454
+                    TabIndex =4
+                    Name ="cmdHelp"
+                    Caption ="?"
+                    GUID = Begin
+                        0xa12e1020648f2f4f8c3b1c6e04d512dc
+                    End
+
+                    LayoutCachedLeft =9127
+                    LayoutCachedTop =56
+                    LayoutCachedWidth =9637
+                    LayoutCachedHeight =510
                     WebImagePaddingLeft =2
                     WebImagePaddingTop =2
                     WebImagePaddingRight =1
@@ -361,6 +422,7 @@ Private Sub Form_Open(Cancel As Integer)
   Dim objBench As New clsBenchmark
   
   Me.ctlClasses.RowSource = GetBenchmarkClasses
+  Me.ctlIterations = objBench.MinIterations
   Me.ctlTimeout.Value = objBench.Timeout
 End Sub
 

@@ -5,7 +5,7 @@ Attribute VB_Exposed = False
 Option Compare Database
 Option Explicit
 
-Private Const ITERATIONS As Integer = 1000
+Private Const Iterations As Integer = 1000
 
 Public Sub Setup(ByVal Method As String)
   Debug.Print "Setup for " & Method
@@ -14,7 +14,7 @@ End Sub
 Public Sub String_WithWhileLen()
   Dim str As String
   
-  While Len(str) < ITERATIONS
+  While Len(str) < Iterations
     str = str + "1"
   Wend
 End Sub
@@ -24,7 +24,7 @@ Public Sub String_WithWhile()
   Dim i   As Integer
   
   i = 1
-  While i <= ITERATIONS
+  While i <= Iterations
     str = str + "1"
     i = i + 1
   Wend
@@ -34,7 +34,7 @@ Public Sub String_WithFor()
   Dim str As String
   Dim i   As Integer
   
-  For i = 1 To ITERATIONS
+  For i = 1 To Iterations
     str = str + "1"
   Next
 End Sub

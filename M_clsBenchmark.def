@@ -21,22 +21,30 @@ Option Compare Database
 Option Explicit
 
 Private Const DEFAULT_TIMEOUT = 200     ' ms
-Private Const MINIMUM_ITERATIONS = 10
+Private Const MINIMUM_ITERATIONS = 1
 Private Const FACTORY_NAME = "__Bench_Factory"
 Private Const FACTORY_PROC_NAME = "GetBenchClass"
 
 Private c_ClassName     As String
 Private c_Results       As clsBenchmark_Results
+Private c_MinIterations As Long
 Private c_Timeout       As Long
 Private c_BaseDuration  As Long
-
-' Private Declare Function timeGetTime Lib "winmm.dll" () As Long ' in ms , Auflösung 1 ms
+Private c_Overhead      As Currency
 
 
 Private Sub Class_Initialize()
   Set c_Results = New clsBenchmark_Results
+  c_MinIterations = MINIMUM_ITERATIONS
   c_Timeout = DEFAULT_TIMEOUT
 End Sub
+
+Public Sub EmptySub()
+End Sub
+
+' ----------------------------------------------------------------------------------
+' --- Properties
+' ----------------------------------------------------------------------------------
 
 Public Property Get Timeout() As Long
   Timeout = c_Timeout
@@ -45,14 +53,40 @@ Public Property Let Timeout(ByVal ms As Long)
   c_Timeout = ms
 End Property
 Public Function SetTimeout(ByVal ms As Long) As clsBenchmark
-  c_Timeout = ms
+  Me.Timeout = ms
   Set SetTimeout = Me
 End Function
 
+Public Property Get MinIterations() As Long
+  MinIterations = c_MinIterations
+End Property
+Public Property Let MinIterations(ByVal TheValue As Long)
+  c_MinIterations = TheValue
+End Property
+Public Function SetMinIterations(ByVal TheValue As Long) As clsBenchmark
+  Me.MinIterations = TheValue
+  Set SetMinIterations = Me
+End Function
+
+Public Property Get TestCount() As Integer
+  TestCount = c_Results.Count
+End Property
+
+Public Property Get Results() As clsBenchmark_Results
+  Set Results = c_Results
+End Property
+
+Public Property Get Title() As String
+  Title = "Running Benchmark " & c_ClassName & " " & Now
+End Property
+
+' ----------------------------------------------------------------------------------
+' --- Methods / Functions
+' ----------------------------------------------------------------------------------
 
 Public Function Run(ByVal BenchmarkClass As Variant, Optional ByVal Timeout As Long = 0) As clsBenchmark
-  Dim objBench As Object
-  Dim mi As TLI.MemberInfo
+  Dim objBench  As Object
+  Dim miMethod  As TLI.MemberInfo
   
   If Timeout > 0 Then Me.Timeout = Timeout
   
@@ -69,10 +103,10 @@ Public Function Run(ByVal BenchmarkClass As Variant, Optional ByVal Timeout As L
   With ObjectInfo(objBench)
     c_ClassName = .ObjectName
     If .AllMembers.Count > 0 Then
-      ' Call Calibrate
-      For Each mi In .AllMembers
-        If mi.InvokeKind = INVOKE_FUNC Then
-          Call Run_SingleMethod(objBench, mi.Name)
+      Call Calibrate
+      For Each miMethod In .AllMembers
+        If miMethod.InvokeKind = INVOKE_FUNC Then
+          Call Run_SingleMethod(objBench, miMethod.Name)
         End If
       Next
     End If
@@ -80,23 +114,7 @@ Public Function Run(ByVal BenchmarkClass As Variant, Optional ByVal Timeout As L
   Set Run = Me
 End Function
 
-Public Function GetClassObj(ByVal Classname As String) As Object
-  If CreateFactory(Classname) Then
-    Set GetClassObj = Application.Run(FACTORY_PROC_NAME)
-  End If
-End Function
 
-Public Property Get TestCount() As Integer
-  TestCount = c_Results.Count
-End Property
-
-Public Property Get Results() As clsBenchmark_Results
-  Set Results = c_Results
-End Property
-
-Public Property Get Title() As String
-  Title = "Running Benchmark " & c_ClassName & " " & Now
-End Property
 
 Public Function Report() As String
   
@@ -106,13 +124,16 @@ End Function
 
 ' ----------------------------------------------------------------------------------
 
+' Create a Factory and the Create an Object of the Class with the Benchmark code
+Private Function GetClassObj(ByVal Classname As String) As Object
+  If CreateFactory(Classname) Then
+    Set GetClassObj = Application.Run(FACTORY_PROC_NAME)
+  End If
+End Function
+
 Private Function CreateFactory(ByVal Classname As String) As Boolean
-  'Dim mdl As Module
   Dim VBKomp As VBComponent
-  'Dim strName As String
   Dim str As String
-  'Dim startLine As Long, startCol As Long
-  'Dim EndLine As Long, EndCol As Long
   
   str = str & "Public Function " & FACTORY_PROC_NAME & " as " & Classname & vbCrLf
   str = str & "  Set " & FACTORY_PROC_NAME & " = New " & Classname & vbCrLf
@@ -121,7 +142,6 @@ Private Function CreateFactory(ByVal Classname As String) As Boolean
   With MainApp_Project
     On Error Resume Next
       Set VBKomp = .VBComponents.Item(Classname)
-      ' Set mdl = Access.Modules(Classname)
       If Err = 9 Then
         On Error GoTo 0
         Err.Raise 9, , "Can not find Benchmark Class " & Classname
@@ -162,31 +182,41 @@ End Sub
 
 
 Private Sub Run_SingleMethod(ByVal TheClass As Object, ByVal MethodName As String)
+  Dim cTimeUsed As Currency
   Dim lCount As Long
   
   If MethodName = "Setup" Then Exit Sub
   If MethodName = "Teardown" Then Exit Sub
-  
-  With ObjectInfo(TheClass)
-    If .HasFunction("Setup") Then Call .CallFunction("Setup", MethodName)
-  End With
+      
+  Do While True
+    With ObjectInfo(TheClass)
+      If .HasFunction("Setup") Then Call .CallFunction("Setup", MethodName)
+    End With
     
-  With StopWatch
-    Do While True
-      If (lCount >= MINIMUM_ITERATIONS) Then
-        If .Elapsedms >= c_Timeout Then Exit Do
-      End If
-      lCount = lCount + 1
+    lCount = lCount + 1
+    With StopWatch
       Call TLI.InvokeHook(TheClass, MethodName, INVOKE_FUNC)
-    Loop
-    Call c_Results.Add(MethodName, lCount, .Elapsedms)
-  End With
+      cTimeUsed = cTimeUsed + .Elapsedms
+    End With
+    With ObjectInfo(TheClass)
+      If .HasFunction("Teardown") Then Call .CallFunction("Teardown", MethodName)
+    End With
+    
+    If (Me.MinIterations > 0) And (lCount >= Me.MinIterations) Then Exit Do
+    If (Me.Timeout > 0) And (cTimeUsed > Me.Timeout) Then Exit Do
+  Loop
   
-  With ObjectInfo(TheClass)
-    If .HasFunction("Teardown") Then Call .CallFunction("Teardown", MethodName)
-  End With
+  Call c_Results.Add(MethodName, lCount, cTimeUsed - (lCount * c_Overhead))
   
 End Sub
+
+Private Sub Calibrate()
+  With StopWatch
+      Call TLI.InvokeHook(Me, "EmptySub", INVOKE_FUNC)
+      c_Overhead = .Elapsedms
+  End With
+End Sub
+
 
 Private Sub Class_Terminate()
   DestroyFactory

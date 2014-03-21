@@ -28,6 +28,8 @@ Private Sub ITestFixture_AddTestCases(ByVal Tests As SimplyVBUnit.TestCaseCollec
 '--------------------------------------------------------------------
 Public Sub Setup()
   Set objBenchmark = New clsBenchmark
+  objBenchmark.MinIterations = 1
+  objBenchmark.Timeout = 0
 End Sub
 
 Public Sub CreateBenchmark_withClass_hasClassNameasDescription()
@@ -69,7 +71,7 @@ Public Sub a_Testrun_needs_some_time()
   objBenchmark.Run New clsSimple_Bench
   
   ' Assert
-  Assert.That objBenchmark.Results.Test(1).Duration, Iz.GreaterThan(1)
+  Assert.That objBenchmark.Results.Test(1).Duration, Iz.GreaterThan(1 / 100)  ' Needs more tahn 1/100 msec
 
 End Sub
 
@@ -102,6 +104,13 @@ Public Sub We_have_a_fastest_Test()
   Assert.IsNotNothing objBenchmark.Results.Fastest
 End Sub
 
+Public Sub We_have_a_slowest_Test()
+  ' Act
+  objBenchmark.Run New clsSimple_Bench
+  ' Assert
+  Assert.IsNotNothing objBenchmark.Results.Slowest
+End Sub
+
 Public Sub We_Have_a_TestReport()
 
   ' Act
@@ -112,13 +121,43 @@ Public Sub We_Have_a_TestReport()
 End Sub
 
 ' ------------------------------------------------------------------------
+' -- Running a very fast method
+
+Public Sub We_can_run_EmptyMethods_Test()
+  ' Act
+  objBenchmark.Run New clsNull_Bench
+  ' Assert
+  Assert.That objBenchmark.Report, Iz.[Not].EqualTo("")
+  
+  Assert.That objBenchmark.Results.Test(1).Duration, Iz.EqualTo(0)
+  Assert.IsFalse objBenchmark.Results.Test(1).IsValidTest
+
+End Sub
+
+' ------------------------------------------------------------------------
+' -- Running a slow method
+
+Public Sub We_can_run_LongRunning_Test()
+  ' Act
+  objBenchmark.Run New clsLongRunning_Bench
+  ' Assert
+  Assert.That objBenchmark.Report, Iz.[Not].EqualTo("")
+  Assert.That objBenchmark.Report, Text.Contains("Fastest")
+
+End Sub
+
+
+' ------------------------------------------------------------------------
 
 Public Sub We_can_run_Test_by_Name()
   ' Act
+  objBenchmark.MinIterations = 100
   objBenchmark.Run "clsSimple_Bench"
+  'objBenchmark.Run New clsSimple_Bench
   
   ' Assert
   Assert.That objBenchmark.TestCount, Iz.EqualTo(4)
   Assert.That objBenchmark.Report, Text.Contains("The fastest Test")
+  Assert.That objBenchmark.Results.Test(1).Iterations, Iz.EqualTo(100)
 
 End Sub

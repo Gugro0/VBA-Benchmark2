@@ -21,11 +21,11 @@ Private Sub Class_Initialize()
   Set c_ParentGetter = New clsParentGetter
 End Sub
 
-Public Sub Add(ByVal Testname As String, ByVal ITERATIONS As Long, ByVal Duration As Long)
+Public Sub Add(ByVal Testname As String, ByVal Iterations As Long, ByVal Duration As Currency)
   Dim Result As clsBenchmark_Result
   
   Set Result = New clsBenchmark_Result
-  Call Result.Initialize(Testname, ITERATIONS, Duration, c_ParentGetter)
+  Call Result.Initialize(Testname, Iterations, Duration, c_ParentGetter)
   c_Results.Add Result
 End Sub
 
@@ -42,31 +42,31 @@ Public Property Get Test(ByVal Index As Integer) As clsBenchmark_Result
 End Property
 
 Public Property Get Fastest() As clsBenchmark_Result
-  Dim v As Variant
-  Dim res As clsBenchmark_Result
-  Dim lMaxIter As Long
+  Dim v         As Variant
+  Dim res       As clsBenchmark_Result
+  Dim dMaxIter  As Double
   
   For Each v In Me.AllResults
     Set res = v
-    If res.IterationsPerSecond > lMaxIter Then
+    If res.IterationsPerSecond >= dMaxIter Then
       Set Fastest = res
-      lMaxIter = Fastest.IterationsPerSecond
+      dMaxIter = Fastest.IterationsPerSecond
     End If
   Next
 
 End Property
 
 Public Property Get Slowest() As clsBenchmark_Result
-  Dim v As Variant
-  Dim res As clsBenchmark_Result
-  Dim lMinIter As Long
+  Dim v         As Variant
+  Dim res      As clsBenchmark_Result
+  Dim dMinIter As Double
   
-  lMinIter = 99999999
+  dMinIter = 99999999
   For Each v In Me.AllResults
     Set res = v
-    If res.IterationsPerSecond < lMinIter Then
+    If res.IterationsPerSecond < dMinIter Then
       Set Slowest = res
-      lMinIter = Fastest.IterationsPerSecond
+      dMinIter = Fastest.IterationsPerSecond
     End If
   Next
 
@@ -83,7 +83,7 @@ Public Function Report() As String
   Next
   With Fastest
     str = str & "The fastest Test was: " & .Name & " ( " & .Speed & " )"
-    If .TimePerIteration < 0.1 Then
+    If Not .IsValidTest Then
       str = str & vbCrLf & "WARNING: Your test are running so fast, so due to the Benchmark overhead your results will not be accurate!"
     End If
   End With

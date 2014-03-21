@@ -1,0 +1,16 @@
+Attribute VB_GlobalNameSpace = False
+Attribute VB_Creatable = False
+Attribute VB_PredeclaredId = False
+Attribute VB_Exposed = False
+Option Compare Database
+Option Explicit
+
+Private Declare Sub apiSleep Lib "kernel32" Alias "Sleep" (ByVal dwMilliseconds As Long)
+
+Public Sub Sleep_1sec()
+  apiSleep 1000
+End Sub
+
+Public Sub Sleep_5sec()
+  apiSleep 5 * 1000
+End Sub
