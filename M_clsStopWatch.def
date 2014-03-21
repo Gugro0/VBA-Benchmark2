@@ -13,16 +13,22 @@ Attribute VB_Exposed = False
 '                ... do something
 '             End With
 '             will generate a Log Entry
+' See also  : http://support.microsoft.com/kb/172338/de
 '---------------------------------------------------------------------------------------
 
 Option Compare Database
 Option Explicit
 
+Private Const CURRENCY_MULTPLIER = 10000
 
 Private Type t_StopWatch
  Description     As String
- Start           As Currency ' LongLong
- Frequency       As Currency ' LongLong
+ 
+ ' Currency is a 64bit Integer Type. To display a Currency value as a true integer multiply it by 10,000
+ Start           As Currency ' LARGE_INTEGER / LongLong
+ Stopp           As Currency ' LARGE_INTEGER / LongLong
+ Frequency       As Currency ' LARGE_INTEGER / LongLong
+ 
  LogOnTerminate  As Boolean
  LogCategory     As String
  LogModule       As String
@@ -32,7 +38,7 @@ End Type
 Private z As t_StopWatch
 
 Private Declare Function QueryPerformanceCounter Lib "kernel32" (x As Currency) As Long
-Private Declare Function QueryPerformanceFrequency Lib "kernel32" (x As Currency) As Long
+Private Declare Function QueryPerformanceFrequency Lib "kernel32" (x As Currency) As Long   ' 1 / sec
 
 Public Sub Init(Optional ByVal strDescription As String, _
                   Optional ByVal LogCategory As String = "StopWatch", _
@@ -61,24 +67,52 @@ Public Property Let LogOnTerminate(ByVal TheValue As Boolean)
   z.LogOnTerminate = TheValue
 End Property
 
+' -----------------------------------------------------------------------------
+
 Public Sub Start()
-  If QueryPerformanceFrequency(z.Frequency) = 0 Then
-    Err.Raise "Your hardware does not support a high-resolution counter!"
-  Else
-    z.Frequency = z.Frequency
+  If Me.Frequency > 0 Then
+    z.Stopp = 0
     QueryPerformanceCounter z.Start
   End If
 End Sub
 
-Public Property Get Frequency() As Currency     ' 1 / msec
+Public Sub Stopp()
+  'If z.Start > 0 Then
+    QueryPerformanceCounter z.Stopp
+  'End If
+End Sub
+
+
+' -------------------------------------------------------------------------------
+
+Public Property Get Frequency() As Currency     ' 1 / sec
+  If z.Frequency = 0 Then
+    If QueryPerformanceFrequency(z.Frequency) = 0 Then
+      Err.Raise "Your hardware does not support a high-resolution counter!"
+    Else
+      z.Frequency = z.Frequency * CURRENCY_MULTPLIER
+    End If
+  End If
   Frequency = z.Frequency
 End Property
+Public Property Get MinimumResolution() As Double
+  MinimumResolution = 1 / Frequency
+End Property
 
-Public Property Get Elapsedms() As Currency ' in milliseconds
+Public Property Get Elapsedms() As Double ' in milliseconds
   Dim lStop As Currency
   
   QueryPerformanceCounter lStop
-  Elapsedms = (lStop - z.Start) / z.Frequency * 1000
+  If z.Start = 0 Then
+    Elapsedms = 0       ' No Start !!!
+    Exit Function
+  ElseIf z.Stopp = 0 Then
+    lStop = lStop
+  Else
+    lStop = z.Stopp
+  End If
+  Elapsedms = 1000 * (lStop - z.Start) * CURRENCY_MULTPLIER / z.Frequency
+
 End Property
 
 Public Function ToString() As String
@@ -86,6 +120,7 @@ Public Function ToString() As String
 End Function
 
 Private Sub Class_Terminate()
+  Me.Stopp
   If LogOnTerminate Then
     ' Logger.Log.Performance z.LogCategory, z.LogModule, z.LogProcedure, Me.Description, Me.ToString
     Debug.Print z.LogCategory, z.LogModule, z.LogProcedure, Me.Description, Me.ToString

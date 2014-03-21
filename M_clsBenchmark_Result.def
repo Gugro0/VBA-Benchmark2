@@ -14,13 +14,13 @@ Option Explicit
 
 Private c_Name        As String
 Private c_Iterations  As Long
-Private c_Duration    As Long
+Private c_Duration    As Double
 Private c_ParentGetter As clsParentGetter
 
-Public Sub Initialize(ByVal Name As String, ByVal ITERATIONS As Long, ByVal Duration As Long, ByVal pg As clsParentGetter)
+Public Sub Initialize(ByVal Name As String, ByVal Iterations As Long, ByVal Duration As Double, ByVal pg As clsParentGetter)
   c_Name = Name
-  c_Iterations = ITERATIONS
-  Debug.Assert Duration > 0
+  c_Iterations = Iterations
+  If Duration < 0 Then Duration = 0     ' Invalid data !!
   c_Duration = Duration
   Set c_ParentGetter = pg
 End Sub
@@ -31,43 +31,74 @@ End Property
 Public Property Get ID() As Long
   ID = ObjPtr(Me)
 End Property
-Public Property Get ITERATIONS() As Long
-  ITERATIONS = c_Iterations
+Public Property Get Iterations() As Long
+  Iterations = c_Iterations
 End Property
-Public Property Get IterationsPerSecond() As Long
-  IterationsPerSecond = Int(Me.ITERATIONS * 1000 / Me.Duration)
+Public Property Get IterationsPerSecond() As Double
+  If Me.Duration > 0 Then
+    IterationsPerSecond = (Me.Iterations * 1000# / Me.Duration)
+  End If
 End Property
-Public Property Get TimePerIteration() As Double  ' in msec
-  TimePerIteration = Me.Duration / Me.ITERATIONS
+Public Property Get TimePerIteration() As Double    ' in msec
+  TimePerIteration = Me.Duration / Me.Iterations
 End Property
-Public Property Get Duration() As Long            ' in msec
+Public Property Get Duration() As Double            ' in msec
   Duration = c_Duration
 End Property
 
+Public Property Get IsValidTest() As Boolean
+  IsValidTest = (c_Duration / c_Iterations) > (StopWatch.MinimumResolution * 10)
+End Property
+
 Public Function PercentSlower() As Double
-  PercentSlower = Round((1 - Me.IterationsPerSecond / Parent.Fastest.IterationsPerSecond) * 100, 2)
+  If Parent.Fastest.IterationsPerSecond > 0 Then
+    PercentSlower = Round((1 - Me.IterationsPerSecond / Parent.Fastest.IterationsPerSecond) * 100, 2)
+  End If
 End Function
 
 Public Function Result() As String
   Dim str As String
   
-  str = FillBlank(Me.Name, 35) & Format(Me.TimePerIteration, "#,##0.0000") & " msec/Iter => " & Format(Me.IterationsPerSecond, "#,##0") & " Iter/sec => "
+  str = FillBlank(Me.Name, 35) & TimePerIteration2String & " => " & IterationsPerScond2String & " => "
   If Parent.Fastest.ID = Me.ID Then
     str = str & " Fastest !!"
   Else
     str = str & PercentSlower & "% slower"
+  End If
+  If Not Me.IsValidTest Then
+    str = str & " (invalid!)"
   End If
   Result = str
 End Function
 
 Public Function Speed() As String
   Dim lFactor As Long
+  If IterationsPerSecond = 0 Then Exit Function
   
   lFactor = 10 ^ Int(Log10(IterationsPerSecond) + 1)
   
   Speed = lFactor & " Iterations in " & Format(Me.TimePerIteration * lFactor / 1000, "#,##0.00") & " sec"
 End Function
 
+Public Function TimePerIteration2String() As String
+  If Me.TimePerIteration > 100 Then
+    TimePerIteration2String = Format(Me.TimePerIteration, "#,##0") & " msec/Iter"
+  ElseIf Me.TimePerIteration > 1 Then
+    TimePerIteration2String = Format(Me.TimePerIteration, "0.0") & " msec/Iter"
+  Else
+    TimePerIteration2String = Format(Me.TimePerIteration, "0.0000") & " msec/Iter"
+  End If
+End Function
+
+Public Function IterationsPerScond2String() As String
+  If Iterations > 1 Then
+    IterationsPerScond2String = Format(Me.IterationsPerSecond, "#,##0") & " Iter/sec"
+  Else
+    IterationsPerScond2String = Format(Me.IterationsPerSecond, "0.000") & " Iter/sec"
+  End If
+End Function
+
+' ------------------------------------------------------------------------------------------------
 
 Private Function FillBlank(ByVal TheStr As String, TheLength As Integer) As String
   FillBlank = Left$(TheStr + String(TheLength, " "), TheLength)

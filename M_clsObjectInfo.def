@@ -96,31 +96,37 @@ Public Function CallFunction(ByVal FunctionName As String, ParamArray Params()) 
   Dim vTmpParams2()
   Dim vParams()
   
-  vTmpParams = Params
-  Do
-    If UBound(vTmpParams) = -1 Then
-      ' no Params at all
-      CallFunction = TLI.InvokeHook(TheObject, FunctionName, INVOKE_FUNC)
-      Exit Do
-    ElseIf IsArray(vTmpParams(0)) Then
-      ' Params(0) is an Array of Params, so recurse again
-      vTmpParams2 = vTmpParams(0)
-      vTmpParams = vTmpParams2
-    Else
-      numArgs = UBound(vTmpParams)
-      ' InvokeHookArray needs the params in REVERSE order !!
-      ReDim vParams(numArgs)
-      For i = 0 To numArgs
-        If IsObject(vTmpParams(numArgs - i)) Then
-          Set vParams(i) = vTmpParams(numArgs - i)
-        Else
-          vParams(i) = vTmpParams(numArgs - i)
-        End If
-      Next
-      CallFunction = TLI.InvokeHookArray(TheObject, FunctionName, INVOKE_FUNC, vParams)
-      Exit Do
-    End If
-  Loop
+  On Error GoTo CallFunction_Error
+    vTmpParams = Params
+    Do
+      If UBound(vTmpParams) = -1 Then
+        ' no Params at all
+        CallFunction = TLI.InvokeHook(TheObject, FunctionName, INVOKE_FUNC)
+        Exit Do
+      ElseIf IsArray(vTmpParams(0)) Then
+        ' Params(0) is an Array of Params, so recurse again
+        vTmpParams2 = vTmpParams(0)
+        vTmpParams = vTmpParams2
+      Else
+        numArgs = UBound(vTmpParams)
+        ' InvokeHookArray needs the params in REVERSE order !!
+        ReDim vParams(numArgs)
+        For i = 0 To numArgs
+          If IsObject(vTmpParams(numArgs - i)) Then
+            Set vParams(i) = vTmpParams(numArgs - i)
+          Else
+            vParams(i) = vTmpParams(numArgs - i)
+          End If
+        Next
+        CallFunction = TLI.InvokeHookArray(TheObject, FunctionName, INVOKE_FUNC, vParams)
+        Exit Do
+      End If
+    Loop
+  On Error GoTo 0
+  Exit Function
+  
+CallFunction_Error:
+  Err.Raise Err.Number, TypeName(Me) & ".CallFunction", "Cann not call " & FunctionName & " in " & TypeName(TheObject) & " : " & Err.Description
 End Function
 
 Private Function GetItem(ByVal ItemName As String) As TLI.SearchItem
