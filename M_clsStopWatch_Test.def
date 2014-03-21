@@ -1,0 +1,154 @@
+Attribute VB_GlobalNameSpace = False
+Attribute VB_Creatable = False
+Attribute VB_PredeclaredId = False
+Attribute VB_Exposed = False
+Option Compare Database
+Option Explicit
+
+'AccUnit:TestClass
+
+'--------------------------------------------------------------------
+' AccUnit Infrastructure
+'--------------------------------------------------------------------
+Dim c_Watchstop As clsStopWatch
+
+Private Declare Sub apiSleep Lib "kernel32" Alias "Sleep" (ByVal dwMilliseconds As Long)
+
+Implements SimplyVBUnit.ITestFixture
+Implements AccUnit_Integration.ITestManagerBridge
+Private TestManager As AccUnit_Integration.TestManager
+Private Sub ITestManagerBridge_InitTestManager(ByVal NewTestManager As AccUnit_Integration.ITestManagerComInterface): Set TestManager = NewTestManager: End Sub
+Private Function ITestManagerBridge_GetTestManager() As AccUnit_Integration.ITestManagerComInterface: Set ITestManagerBridge_GetTestManager = TestManager: End Function
+Private Sub ITestFixture_AddTestCases(ByVal Tests As SimplyVBUnit.TestCaseCollector): TestManager.AddTestCases Tests: End Sub
+
+
+Public Sub HasFrequency()
+  Set c_Watchstop = StopWatch
+  
+  Assert.That c_Watchstop.Frequency, Iz.GreaterThan(100000)      ' more than 100.000 Hz
+  
+  Assert.That c_Watchstop.MinimumResolution, Iz.GreaterThan(0)
+  Assert.That c_Watchstop.MinimumResolution, Iz.LessThan(1 / 100000)    ' less than 1/100.000 s = 1/100 msec
+  
+End Sub
+
+Public Sub MinimumResolution_IncludingOverhead()
+  Dim dElapsedms As Double
+  
+  Set c_Watchstop = StopWatch
+  With c_Watchstop
+    .Start
+    .Stopp
+    dElapsedms = .Elapsedms
+  End With
+  
+  Assert.That dElapsedms, Iz.GreaterThanOrEqualTo(0)
+  Assert.That dElapsedms, Iz.LessThan(1 / 100)   ' less than 1/100 msec  =  0.01 msec
+End Sub
+
+Public Sub SleepOneSecond()
+  Dim cElapsed As Double
+  
+  Set c_Watchstop = StopWatch
+  apiSleep 1000
+  cElapsed = c_Watchstop.Elapsedms
+  
+  Assert.That cElapsed, Iz.GreaterThan(0)
+  Assert.That cElapsed, Iz.InRange(990, 1010)
+
+End Sub
+
+' ------------------------------------------------------------------------
+
+Public Sub Overhead_for_stacked_StopWatch()
+  Dim t1 As Double
+  Dim t2 As Double
+  
+  With StopWatch      ' "Outer Watch"
+    With StopWatch    ' "Inner Watch"
+      apiSleep 100
+      t1 = .Elapsedms
+    End With
+    t2 = .Elapsedms
+  End With
+  
+  Assert.That (t2 - t1), Iz.LessThan(1 / 10), "should be less than 1/10 msec"
+End Sub
+
+' ------------------------------------------------------------------------
+
+Public Sub Measure_Long_Assignment()
+  Const LOOPS = 100000
+  Dim l         As Long
+  Dim Value     As Long
+  Dim lDuration As Double
+  
+  With StopWatch
+    For l = 1 To LOOPS
+      Value = 1
+    Next
+    lDuration = .Elapsedms
+  End With
+  
+  Debug.Print "Longs:   " & Int(LOOPS / (lDuration / 1000#)) & "/Sec"
+  
+End Sub
+
+Public Sub Measure_String_Assignment()
+  Const LOOPS = 100000
+  Dim l As Long
+  
+  Dim Value As String
+  Dim lDuration   As Currency
+  
+  With StopWatch
+    For l = 1 To LOOPS
+      Value = "1"
+    Next
+    lDuration = .Elapsedms
+  End With
+  
+  Debug.Print "Strings: " & Int(LOOPS / (lDuration / 1000#)) & "/Sec"
+  
+End Sub
+
+
+Public Sub Measure_Object_Assignment()
+  Const LOOPS = 100000
+  Dim l As Long
+  
+  Dim obj     As Object
+  Dim Value   As Object
+  
+  Dim lDuration   As Double
+  
+  Set obj = New Collection
+  
+  With StopWatch
+    For l = 1 To LOOPS
+      Set Value = obj
+    Next
+    lDuration = .Elapsedms
+  End With
+  
+  Debug.Print "Object Assignment: " & Int(LOOPS / (lDuration / 1000#)) & "/Sec"
+  
+End Sub
+
+Public Sub Measure_Object_Creation()
+  Const LOOPS = 100000
+  Dim l As Long
+  
+  Dim Value As Object
+  Dim lDuration   As Double
+  
+  With StopWatch
+    For l = 1 To LOOPS
+      Set Value = New Collection
+    Next
+    lDuration = .Elapsedms
+  End With
+  
+  Debug.Print "Objects Creation: " & Int(LOOPS / (lDuration / 1000#)) & " 1/Sec"
+  
+End Sub
