@@ -1,0 +1,190 @@
+Version =20
+VersionRequired =20
+Checksum =-241619912
+Begin Form
+    DividingLines = NotDefault
+    AllowDesignChanges = NotDefault
+    DefaultView =0
+    PictureAlignment =2
+    DatasheetGridlinesBehavior =3
+    GridY =10
+    Width =8250
+    DatasheetFontHeight =11
+    ItemSuffix =5
+    Right =19545
+    Bottom =12600
+    DatasheetGridlinesColor =15062992
+    RecSrcDt = Begin
+        0xfa544f6bf55ee440
+    End
+    GUID = Begin
+        0xb240547878d32743ae4b778d2d5a85a0
+    End
+    NameMap = Begin
+        0x0acc0e5500000000000000000000000000000000000000000c00000005000000 ,
+        0x0000000000000000000000000000
+    End
+    DatasheetFontName ="Calibri"
+    FilterOnLoad =0
+    DatasheetBackColor12 =-2147483643
+    ShowPageMargins =0
+    DisplayOnSharePointSite =1
+    DatasheetAlternateBackColor =16053492
+    DatasheetGridlinesColor12 =15062992
+    FitToScreen =1
+    Begin
+        Begin Label
+            BackStyle =0
+            FontSize =11
+            FontName ="Calibri"
+            ThemeFontIndex =1
+            BackThemeColorIndex =1
+            BorderThemeColorIndex =1
+            ForeThemeColorIndex =2
+            ForeTint =60.0
+            GridlineThemeColorIndex =1
+            GridlineShade =65.0
+        End
+        Begin Tab
+            Width =5103
+            Height =3402
+            FontSize =11
+            FontName ="Calibri"
+            ThemeFontIndex =0
+            GridlineThemeColorIndex =1
+            GridlineShade =65.0
+            BackColor =-2147483633
+            BorderLineStyle =0
+            ForeThemeColorIndex =2
+            ForeShade =50.0
+        End
+        Begin Page
+            Width =1701
+            Height =1701
+            BorderThemeColorIndex =3
+            BorderShade =90.0
+            GridlineThemeColorIndex =1
+            GridlineShade =65.0
+        End
+        Begin Section
+            Height =7425
+            Name ="Detailbereich"
+            GUID = Begin
+                0x8faee1c319c4b942a8621d13515bf35a
+            End
+            AutoHeight =1
+            AlternateBackColor =15921906
+            AlternateBackThemeColorIndex =1
+            AlternateBackShade =95.0
+            BackThemeColorIndex =1
+            Begin
+                Begin Tab
+                    OverlapFlags =85
+                    TextFontFamily =18
+                    Width =8250
+                    Height =7425
+                    Name ="RegisterStr0"
+                    FontName ="Cambria"
+                    GUID = Begin
+                        0xcd3082e974d3024b9a7a95ce57871402
+                    End
+                    GridlineColor =10921638
+                    HorizontalAnchor =2
+                    VerticalAnchor =2
+
+                    LayoutCachedWidth =8250
+                    LayoutCachedHeight =7425
+                    ForeColor =4138256
+                    Begin
+                        Begin Page
+                            OverlapFlags =87
+                            Left =142
+                            Top =465
+                            Width =7973
+                            Height =6825
+                            BorderColor =12835293
+                            Name ="English"
+                            GUID = Begin
+                                0xdae6159ab1091d49a4a84afa7f6d4cfb
+                            End
+                            GridlineColor =10921638
+                            LayoutCachedLeft =142
+                            LayoutCachedTop =465
+                            LayoutCachedWidth =8115
+                            LayoutCachedHeight =7290
+                            WebImagePaddingLeft =2
+                            WebImagePaddingTop =2
+                            WebImagePaddingRight =2
+                            WebImagePaddingBottom =2
+                            Begin
+                                Begin Label
+                                    OverlapFlags =215
+                                    Left =390
+                                    Top =735
+                                    Width =7725
+                                    Height =1365
+                                    BorderColor =16777215
+                                    ForeColor =13995605
+                                    Name ="Bezeichnungsfeld4"
+                                    Caption ="VBA Benchmark will help you to test the runtime of your code and compare differe"
+                                        "nt implementations for the best speed.\015\012\015\012Create a VBA class with Pu"
+                                        "blic Sub's for every code Part you would like to test.\015\012"
+                                    GUID = Begin
+                                        0x28bcd5a4590d2e44bc05ce05f643d994
+                                    End
+                                    GridlineColor =10921638
+                                    LayoutCachedLeft =390
+                                    LayoutCachedTop =735
+                                    LayoutCachedWidth =8115
+                                    LayoutCachedHeight =2100
+                                End
+                            End
+                        End
+                        Begin Page
+                            OverlapFlags =215
+                            Left =135
+                            Top =465
+                            Width =7980
+                            Height =6825
+                            BorderColor =12835293
+                            Name ="Deutsch"
+                            GUID = Begin
+                                0x73019e081fd53c439aa143e2659ab6b2
+                            End
+                            GridlineColor =10921638
+                            LayoutCachedLeft =135
+                            LayoutCachedTop =465
+                            LayoutCachedWidth =8115
+                            LayoutCachedHeight =7290
+                            WebImagePaddingLeft =2
+                            WebImagePaddingTop =2
+                            WebImagePaddingRight =2
+                            WebImagePaddingBottom =2
+                        End
+                        Begin Page
+                            OverlapFlags =215
+                            Left =135
+                            Top =465
+                            Width =7980
+                            Height =6825
+                            BorderColor =12835293
+                            Name ="??´?????"
+                            GUID = Begin
+                                0x4797f20f4aba584680b1c72aa81f8416
+                            End
+                            GridlineColor =10921638
+                            LayoutCachedLeft =135
+                            LayoutCachedTop =465
+                            LayoutCachedWidth =8115
+                            LayoutCachedHeight =7290
+                            WebImagePaddingLeft =2
+                            WebImagePaddingTop =2
+                            WebImagePaddingRight =2
+                            WebImagePaddingBottom =2
+                        End
+                    End
+                End
+            End
+        End
+    End
+End
