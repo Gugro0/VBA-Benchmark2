@@ -152,8 +152,8 @@ End Sub
 Public Sub We_can_run_Test_by_Name()
   ' Act
   objBenchmark.MinIterations = 100
-  objBenchmark.Run "clsSimple_Bench"
-  'objBenchmark.Run New clsSimple_Bench
+  'objBenchmark.Run "clsSimple_Bench"
+  objBenchmark.Run New clsSimple_Bench
   
   ' Assert
   Assert.That objBenchmark.TestCount, Iz.EqualTo(4)

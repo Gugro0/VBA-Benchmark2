@@ -1,6 +1,6 @@
 Version =20
 VersionRequired =20
-Checksum =-1624063387
+Checksum =1957431810
 Begin Form
     PopUp = NotDefault
     Modal = NotDefault
@@ -22,7 +22,7 @@ Begin Form
     ItemSuffix =11
     Left =3225
     Top =2415
-    Right =22770
+    Right =28545
     Bottom =15015
     DatasheetGridlinesColor =15062992
     RecSrcDt = Begin
@@ -42,10 +42,10 @@ Begin Form
         0x010000006801000000000000a10700000100000001000000
     End
     PrtDevMode = Begin
-        0x005c4e05344a2e0023875630e05c4e052a87563050459f33c85c4e05384c2e00 ,
+        0x005a3900c45c6e05e858390023876d30e05c6e052a876d301c2af1e5c85c6e05 ,
         0x010400069c00f40243ef8005010009009a0b3408640001000f00c80001000100 ,
-        0xc800020001004134004a2e007625ed2f405d4e0508584e05c45c4e0500584e05 ,
-        0x084c2e00b3480000000000000000000000000000010000000000000001000000 ,
+        0xc800020001004134005a39001459390076250430405d6e0508586e05c45c6e05 ,
+        0x00586e05bc5a0000000000000000000000000000010000000000000001000000 ,
         0x0200000001000000ffffffff0000000000000000000000000000000044494e55 ,
         0x2200b800f402000076c9bcad0000000000000000000000000000000000000000 ,
         0x0000000000000000060000000100000000000000000001000000000000000000 ,
@@ -75,7 +75,7 @@ Begin Form
     PrtDevNames = Begin
         0x0800160024000100000000000000000000000000000000000000000000000000 ,
         0x00000000466178576172652053657276696365204c6179657200000000000000 ,
-        0x00000000000000000000
+        0x00000000000000000000000000000000000000000000
     End
     AllowPivotTableView =0
     AllowPivotChartView =0
@@ -88,12 +88,12 @@ Begin Form
     DatasheetGridlinesColor12 =15062992
     FitToScreen =1
     PrtDevModeW = Begin
-        0x00000000009a2f003d03003ec400d40501000000b34855300a0000000c000000 ,
-        0x0016d4050016d405fb15d40500000000609a2f000000d4057a7d4701a4992f00 ,
+        0x0000000072ab9b67000000007f0000001cae3a003d03003ec400be0501000000 ,
+        0xb3486c300a0000000c0000000016be050016be05fb15be05000000007cae3a00 ,
         0x01040006dc00f40243ef8005010009009a0b3408640001000f00c80001000100 ,
-        0xc80002000100410034000000000000009005d405010000007894740004000000 ,
-        0xdc9a2f0090649b67040000009005540e2400000000000000b09b2f00a9e44730 ,
-        0x0100000078c50000000000000000000000000000010000000000000001000000 ,
+        0xc8000200010041003400000048000000fa15be05f815be05000000009005be05 ,
+        0x0100000078944a0004000000f8ae3a0090649b67040000009005ef1724000000 ,
+        0x00000000ccaf0000000000000000000000000000010000000000000001000000 ,
         0x0200000001000000ffffffff0000000000000000000000000000000044494e55 ,
         0x2200b800f402000076c9bcad0000000000000000000000000000000000000000 ,
         0x0000000000000000060000000100000000000000000001000000000000000000 ,
@@ -125,7 +125,8 @@ Begin Form
         0x0000000000000000000000000000000000000000000000000000000000000000 ,
         0x4600610078005700610072006500200053006500720076006900630065002000 ,
         0x4c00610079006500720000000000000000000000000000000000000000000000 ,
-        0x000000000000000000000000
+        0x0000000000000000000000000000000000000000000000000000000000000000 ,
+        0x00000000
     End
     Begin
         Begin Label
@@ -197,6 +198,7 @@ Begin Form
                     Top =970
                     Width =3006
                     Height =315
+                    ColumnOrder =0
                     TabIndex =1
                     GUID = Begin
                         0x71a29cc2b2b61644b9e2733d1b63a13c
@@ -236,6 +238,7 @@ Begin Form
                     Top =970
                     Width =1821
                     Height =315
+                    ColumnOrder =2
                     TabIndex =3
                     Name ="ctlTimeout"
                     Format ="Standard"
@@ -297,6 +300,7 @@ Begin Form
                     Top =970
                     Width =1371
                     Height =315
+                    ColumnOrder =1
                     TabIndex =2
                     Name ="ctlIterations"
                     Format ="Standard"
@@ -336,6 +340,7 @@ Begin Form
                     TabIndex =4
                     Name ="cmdHelp"
                     Caption ="?"
+                    OnClick ="[Event Procedure]"
                     GUID = Begin
                         0xa12e1020648f2f4f8c3b1c6e04d512dc
                     End
@@ -418,6 +423,7 @@ Option Compare Database
 Option Explicit
 
 
+
 Private Sub Form_Open(Cancel As Integer)
   Dim objBench As New clsBenchmark
   
@@ -430,8 +436,8 @@ Private Sub cmdRun_Click()
   If Nz(Me.ctlClasses) <> "" Then
     Me.ctlResult = ""
     DoCmd.Hourglass True
-    With Benchmark.Run(Me.ctlClasses, Nz(Me.ctlTimeout))
-      Me.ctlResult = .Report
+    With Benchmark
+      Me.ctlResult = .Run(Me.ctlClasses, Nz(Me.ctlIterations), Nz(Me.ctlTimeout)).Report
     End With
     DoCmd.Hourglass False
     Me.SetFocus
@@ -447,3 +453,7 @@ Private Function GetBenchmarkClasses() As String
   Next
   GetBenchmarkClasses = str
 End Function
+
+Private Sub cmdHelp_Click()
+  DoCmd.OpenForm "frmBenchmarkHelp", WindowMode:=acDialog
+End Sub
