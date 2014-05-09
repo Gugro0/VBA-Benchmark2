@@ -39,9 +39,6 @@ Private Sub Class_Initialize()
   c_Timeout = DEFAULT_TIMEOUT
 End Sub
 
-Public Sub EmptySub()
-End Sub
-
 ' ----------------------------------------------------------------------------------
 ' --- Properties
 ' ----------------------------------------------------------------------------------
@@ -181,39 +178,50 @@ Private Sub DestroyFactory()
 End Sub
 
 
-Private Sub Run_SingleMethod(ByVal TheClass As Object, ByVal MethodName As String)
-  Dim cTimeUsed As Currency
+Private Sub Run_SingleMethod(ByVal TheClass As Object, ByVal Methodname As String)
+  Dim cTotalTime  As Currency
   Dim lCount As Long
   
-  If MethodName = "Setup" Then Exit Sub
-  If MethodName = "Teardown" Then Exit Sub
+  If Methodname = "Setup" Then Exit Sub
+  If Methodname = "Teardown" Then Exit Sub
       
   Do While True
     With ObjectInfo(TheClass)
-      If .HasFunction("Setup") Then Call .CallFunction("Setup", MethodName)
+      If .HasFunction("Setup") Then Call .CallFunction("Setup", Methodname)
     End With
     
     lCount = lCount + 1
     With StopWatch
-      Call TLI.InvokeHook(TheClass, MethodName, INVOKE_FUNC)
-      cTimeUsed = cTimeUsed + .Elapsedms
+      Call TLI.InvokeHook(TheClass, Methodname, INVOKE_FUNC)
+      cTotalTime = cTotalTime + .Elapsedms
     End With
     With ObjectInfo(TheClass)
-      If .HasFunction("Teardown") Then Call .CallFunction("Teardown", MethodName)
+      If .HasFunction("Teardown") Then Call .CallFunction("Teardown", Methodname)
     End With
     
     If (Me.MinIterations > 0) And (lCount >= Me.MinIterations) Then Exit Do
-    If (Me.Timeout > 0) And (cTimeUsed > Me.Timeout) Then Exit Do
+    If (Me.Timeout > 0) And (cTotalTime > Me.Timeout) Then Exit Do
   Loop
   
-  Call c_Results.Add(MethodName, lCount, cTimeUsed - (lCount * c_Overhead))
+  Call c_Results.Add(Methodname, lCount, cTotalTime - (lCount * c_Overhead))
   
 End Sub
 
 Private Sub Calibrate()
+  Dim TheClass    As clsNull_Bench
+  Dim Methodname  As String
+  
+  Set TheClass = New clsNull_Bench
+  Methodname = "DoNothing"
+  ' Warmup
   With StopWatch
-      Call TLI.InvokeHook(Me, "EmptySub", INVOKE_FUNC)
-      c_Overhead = .Elapsedms
+    Call TLI.InvokeHook(TheClass, Methodname, INVOKE_FUNC)
+    c_Overhead = .Elapsedms
+  End With
+  ' Measure
+  With StopWatch
+    Call TLI.InvokeHook(TheClass, Methodname, INVOKE_FUNC)
+    c_Overhead = .Elapsedms
   End With
 End Sub
 

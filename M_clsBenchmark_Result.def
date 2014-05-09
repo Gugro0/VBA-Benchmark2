@@ -59,11 +59,11 @@ End Function
 Public Function Result() As String
   Dim str As String
   
-  str = FillBlank(Me.Name, 35) & TimePerIteration2String & " => " & IterationsPerScond2String & " => "
+  str = FillBlank(Me.Name, 30) & FillBlank(TimePerIteration2String, -18) & " => " & FillBlank(IterationsPerScond2String, -18) & " => "
   If Parent.Fastest.ID = Me.ID Then
     str = str & " Fastest !!"
   Else
-    str = str & PercentSlower & "% slower"
+    str = str & FillBlank(Format(PercentSlower, "#,##0.0"), -7) & "% slower"
   End If
   If Not Me.IsValidTest Then
     str = str & " (invalid!)"
@@ -91,7 +91,7 @@ Public Function TimePerIteration2String() As String
 End Function
 
 Public Function IterationsPerScond2String() As String
-  If Iterations > 1 Then
+  If IterationsPerSecond > 1 Then
     IterationsPerScond2String = Format(Me.IterationsPerSecond, "#,##0") & " Iter/sec"
   Else
     IterationsPerScond2String = Format(Me.IterationsPerSecond, "0.000") & " Iter/sec"
@@ -101,7 +101,11 @@ End Function
 ' ------------------------------------------------------------------------------------------------
 
 Private Function FillBlank(ByVal TheStr As String, TheLength As Integer) As String
-  FillBlank = Left$(TheStr + String(TheLength, " "), TheLength)
+  If TheLength < 0 Then   ' Right justify
+    FillBlank = Right(String(Abs(TheLength), " ") + TheStr, Abs(TheLength))
+  Else                    ' Left justify
+    FillBlank = Left$(TheStr + String(TheLength, " "), TheLength)
+  End If
 End Function
 
 Private Property Get Parent() As clsBenchmark_Results
